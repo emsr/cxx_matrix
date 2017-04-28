@@ -1,0 +1,1171 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.12: http://docutils.sourceforge.net/" />
+<title>P0009r2 : Polymorphic Multidimensional Array Reference</title>
+<meta name="date" content="2016-05-27" />
+<meta name="author" content="H. Carter Edwards" />
+<meta name="author" content="Bryce Lelbach" />
+<meta name="author" content="Christian Trott" />
+<meta name="author" content="Mauro Bianco" />
+<meta name="author" content="Robin Maffeo" />
+<meta name="author" content="Ben Sander" />
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 7614 2013-02-21 15:55:51Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title, .code .error {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math, pre.code {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+pre.code .ln { color: grey; } /* line numbers */
+pre.code, code { background-color: #eeeeee }
+pre.code .comment, code .comment { color: #5C6576 }
+pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
+pre.code .literal.string, code .literal.string { color: #0C5404 }
+pre.code .name.builtin, code .name.builtin { color: #352B84 }
+pre.code .deleted, code .deleted { background-color: #DEB0A1}
+pre.code .inserted, code .inserted { background-color: #A3D289}
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+/* "booktabs" style (no vertical lines) */
+table.docutils.booktabs {
+  border: 0px;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  border-collapse: collapse;
+}
+table.docutils.booktabs * {
+  border: 0px;
+}
+table.docutils.booktabs th {
+  border-bottom: thin solid;
+  text-align: left;
+}
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document" id="p0009r2-polymorphic-multidimensional-array-reference">
+<h1 class="title">P0009r2 : Polymorphic Multidimensional Array Reference</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr class="field"><th class="docinfo-name">Project:</th><td class="field-body">ISO JTC1/SC22/WG21: Programming Language C++</td>
+</tr>
+<tr class="field"><th class="docinfo-name">Number:</th><td class="field-body">P0009r2</td>
+</tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>2016-05-27</td></tr>
+<tr class="field"><th class="docinfo-name">Reply-to:</th><td class="field-body"><a class="reference external" href="mailto:hcedwar&#64;sandia.gov">hcedwar&#64;sandia.gov</a>, <a class="reference external" href="mailto:balelbach&#64;lbl.gov">balelbach&#64;lbl.gov</a></td>
+</tr>
+<tr><th class="docinfo-name">Author:</th>
+<td>H. Carter Edwards</td></tr>
+<tr><th class="docinfo-name">Contact:</th>
+<td><a class="first last reference external" href="mailto:hcedwar&#64;sandia.gov">hcedwar&#64;sandia.gov</a></td></tr>
+<tr><th class="docinfo-name">Author:</th>
+<td>Bryce Lelbach</td></tr>
+<tr><th class="docinfo-name">Contact:</th>
+<td><a class="first last reference external" href="mailto:balelbach&#64;lbl.gov">balelbach&#64;lbl.gov</a></td></tr>
+<tr><th class="docinfo-name">Author:</th>
+<td>Christian Trott</td></tr>
+<tr><th class="docinfo-name">Contact:</th>
+<td><a class="first last reference external" href="mailto:crtrott&#64;sandia.gov">crtrott&#64;sandia.gov</a></td></tr>
+<tr><th class="docinfo-name">Author:</th>
+<td>Mauro Bianco</td></tr>
+<tr><th class="docinfo-name">Contact:</th>
+<td><a class="first last reference external" href="mailto:mbianco&#64;cscs.ch">mbianco&#64;cscs.ch</a></td></tr>
+<tr><th class="docinfo-name">Author:</th>
+<td>Robin Maffeo</td></tr>
+<tr><th class="docinfo-name">Contact:</th>
+<td><a class="first last reference external" href="mailto:Robin.Maffeo&#64;amd.com">Robin.Maffeo&#64;amd.com</a></td></tr>
+<tr><th class="docinfo-name">Author:</th>
+<td>Ben Sander</td></tr>
+<tr><th class="docinfo-name">Contact:</th>
+<td><a class="first last reference external" href="mailto:ben.sander&#64;amd.com">ben.sander&#64;amd.com</a></td></tr>
+<tr class="field"><th class="docinfo-name">Audience:</th><td class="field-body">Library Evolution Working Group (LEWG)</td>
+</tr>
+<tr class="field"><th class="docinfo-name">URL:</th><td class="field-body"><a class="reference external" href="https://github.com/kokkos/array_ref/blob/master/proposals/P0009.rst">https://github.com/kokkos/array_ref/blob/master/proposals/P0009.rst</a></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<tbody valign="top">
+<tr><td colspan="2"><strong>Revision History</strong></td>
+</tr>
+<tr><td>P0009r0</td>
+<td>Original multidimensional array reference paper with
+motivation, specification, and examples.</td>
+</tr>
+<tr><td>P0009r1</td>
+<td>Revised with renaming from <tt class="docutils literal">view</tt> to <tt class="docutils literal">array_ref</tt>
+and allow unbounded rank through variadic arguments.</td>
+</tr>
+<tr><td>P0009r2
+<em>(current)</em></td>
+<td>Adding details for layout mapping.
+Move motivation, examples, and relaxed array declaration
+to separate papers.</td>
+</tr>
+<tr><td colspan="2"><strong>References</strong></td>
+</tr>
+<tr><td>P0331</td>
+<td>Multidimensional array reference motivation and examples</td>
+</tr>
+<tr><td>P0332</td>
+<td>Relaxed array declaration</td>
+</tr>
+<tr><td>P0122</td>
+<td>span: bounds-safe views for sequences of objects</td>
+</tr>
+<tr><td colspan="2">earlier related papers: N4512, N4355, N4300, N4222</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="array-reference">
+<h1>1&nbsp;&nbsp;&nbsp;Array Reference</h1>
+<p>The header <tt class="docutils literal">&lt;array_ref&gt;</tt> defines types and functions for
+a multidimensional array reference into a contiguous span of objects.</p>
+<div class="section" id="header-array-ref-synopsis">
+<h2>1.1&nbsp;&nbsp;&nbsp;Header <tt class="docutils literal">&lt;array_ref&gt;</tt> synopsis</h2>
+<pre class="code c++ literal-block">
+<span class="keyword">namespace</span> <span class="name">std</span> <span class="punctuation">{</span>
+<span class="keyword">namespace</span> <span class="name">experimental</span> <span class="punctuation">{</span>
+
+  <span class="keyword">template</span><span class="operator">&lt;</span> <span class="keyword">typename</span> <span class="name">DataType</span> <span class="punctuation">,</span> <span class="keyword">typename</span> <span class="punctuation">...</span> <span class="name">Properties</span> <span class="operator">&gt;</span>
+  <span class="keyword">struct</span> <span class="name">array_ref</span> <span class="punctuation">;</span>
+
+  <span class="keyword">template</span><span class="operator">&lt;</span> <span class="keyword">typename</span> <span class="name">DataType</span> <span class="punctuation">,</span> <span class="keyword">typename</span> <span class="punctuation">...</span> <span class="name">Properties</span> <span class="punctuation">,</span> <span class="keyword">typename</span> <span class="punctuation">...</span> <span class="name">SliceSpecifiers</span> <span class="operator">&gt;</span>
+  <span class="name">array_ref</span><span class="operator">&lt;</span> <span class="comment multiline">/* deduced */</span> <span class="operator">&gt;</span>
+  <span class="name">subarray</span><span class="punctuation">(</span> <span class="keyword">const</span> <span class="name">array_ref</span><span class="operator">&lt;</span> <span class="name">DataType</span><span class="punctuation">,</span> <span class="name">Properties</span> <span class="punctuation">...</span> <span class="operator">&gt;</span> <span class="operator">&amp;</span> <span class="punctuation">,</span> <span class="name">SliceSpecifiers</span> <span class="punctuation">...</span> <span class="punctuation">)</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+<span class="punctuation">}}</span>
+
+
+<span class="keyword">namespace</span> <span class="name">std</span> <span class="punctuation">{</span>
+<span class="keyword">namespace</span> <span class="name">experimental</span> <span class="punctuation">{</span>
+<span class="keyword">namespace</span> <span class="name">array_property</span> <span class="punctuation">{</span>
+
+  <span class="keyword">template</span><span class="operator">&lt;</span> <span class="keyword">typename</span> <span class="operator">&gt;</span>
+  <span class="keyword">struct</span> <span class="name">is_array_property</span> <span class="comment multiline">/* = std::integral_constant&lt;bool,?&gt; */</span> <span class="punctuation">;</span>
+
+  <span class="keyword">template</span><span class="operator">&lt;</span> <span class="keyword">typename</span> <span class="name">T</span> <span class="operator">&gt;</span>
+  <span class="keyword">using</span> <span class="name">is_array_property_v</span> <span class="operator">=</span> <span class="name">is_array_property</span><span class="operator">&lt;</span><span class="name">T</span><span class="operator">&gt;::</span><span class="name">value</span> <span class="punctuation">;</span>
+
+  <span class="comment single">// array dimension property
+</span>  <span class="keyword">template</span> <span class="operator">&lt;</span> <span class="keyword">typename</span> <span class="name">IntegralType</span> <span class="punctuation">,</span> <span class="name">IntegralType</span> <span class="punctuation">...</span> <span class="name">Dims</span> <span class="operator">&gt;</span>
+  <span class="keyword">struct</span> <span class="name">dimension_typed</span> <span class="punctuation">;</span>
+
+  <span class="keyword">template</span><span class="operator">&lt;</span> <span class="keyword type">size_t</span> <span class="punctuation">...</span> <span class="name">Dims</span> <span class="operator">&gt;</span>
+  <span class="keyword">using</span> <span class="name">dimension</span> <span class="operator">=</span> <span class="name">dimension_typed</span><span class="operator">&lt;</span> <span class="keyword type">size_t</span> <span class="punctuation">,</span> <span class="name">Dims</span> <span class="punctuation">...</span> <span class="operator">&gt;</span> <span class="punctuation">;</span>
+
+  <span class="comment single">// array layout property
+</span>  <span class="keyword">struct</span> <span class="name">layout_right</span> <span class="punctuation">;</span>
+  <span class="keyword">struct</span> <span class="name">layout_left</span> <span class="punctuation">;</span>
+  <span class="keyword">struct</span> <span class="name">layout_stride</span> <span class="punctuation">;</span>
+
+  <span class="keyword">template</span> <span class="operator">&lt;</span><span class="keyword">typename</span> <span class="name">T</span><span class="operator">&gt;</span> <span class="keyword">struct</span> <span class="name">is_layout</span> <span class="punctuation">;</span>
+  <span class="keyword">template</span> <span class="operator">&lt;</span><span class="keyword">typename</span> <span class="name">T</span><span class="operator">&gt;</span> <span class="keyword">constexpr</span> <span class="keyword type">bool</span> <span class="name">is_layout_v</span> <span class="operator">=</span> <span class="name">is_layout</span><span class="operator">&lt;</span><span class="name">T</span><span class="operator">&gt;::</span><span class="name">value</span><span class="punctuation">;</span>
+
+  <span class="comment single">// bounds checking property
+</span>  <span class="keyword">template</span><span class="operator">&lt;</span> <span class="keyword type">bool</span> <span class="name">Enable</span> <span class="operator">&gt;</span>
+  <span class="keyword">struct</span> <span class="name">bounds_check_if</span> <span class="punctuation">;</span>
+
+  <span class="keyword">using</span> <span class="name">bounds_check</span> <span class="operator">=</span> <span class="name">bounds_check_if</span><span class="operator">&lt;</span> <span class="name builtin">true</span> <span class="operator">&gt;</span> <span class="punctuation">;</span>
+
+  <span class="comment single">// Assignability property
+</span>  <span class="keyword">template</span><span class="operator">&lt;</span> <span class="keyword">class</span> <span class="name class">array_ref_V</span> <span class="punctuation">,</span> <span class="keyword">class</span> <span class="name class">array_ref_U</span> <span class="operator">&gt;</span>
+  <span class="keyword">struct</span> <span class="name">is_assignable</span> <span class="comment multiline">/* : std::integral_constant&lt;bool,?&gt; {} */</span> <span class="punctuation">;</span>
+
+  <span class="keyword">template</span> <span class="operator">&lt;</span> <span class="keyword">class</span> <span class="name class">array_ref_V</span> <span class="punctuation">,</span> <span class="keyword">class</span> <span class="name class">array_ref_U</span> <span class="operator">&gt;</span>
+  <span class="keyword">using</span> <span class="name">is_assignable_v</span> <span class="operator">=</span> <span class="name">is_assignable</span><span class="operator">&lt;</span> <span class="name">array_ref_V</span> <span class="punctuation">,</span> <span class="name">array_ref_U</span> <span class="operator">&gt;::</span><span class="name">value</span> <span class="punctuation">;</span>
+
+  <span class="comment single">// subarray support
+</span>  <span class="keyword">struct</span> <span class="name">all_type</span> <span class="punctuation">{};</span>
+  <span class="keyword">constexpr</span> <span class="name">all_type</span> <span class="name">all</span> <span class="operator">=</span> <span class="name">all_type</span><span class="punctuation">();</span>
+
+<span class="punctuation">}}}</span>
+</pre>
+<!--  -->
+</div>
+<div class="section" id="layout-mapping">
+<h2>1.2&nbsp;&nbsp;&nbsp;Layout Mapping</h2>
+<p>The multidimensional array reference <tt class="docutils literal">array_ref</tt>
+maps multi-indices to objects by composing a
+<em>layout mapping</em> with a sequence of objects.
+The <em>domain</em> of a layout mapping is multidimensional index space
+defined by the Cartesian product of integral extents,
+<tt class="docutils literal"><span class="pre">[0..extent&lt;0&gt;)x[0..extent&lt;1&gt;)x...</span></tt>.
+The <em>codomain</em> of a layout mapping is a subset of span of
+integer values.</p>
+<div class="section" id="multidimensional-index-space">
+<h3>1.2.1&nbsp;&nbsp;&nbsp;Multidimensional Index Space</h3>
+<pre class="code c++ literal-block">
+<span class="keyword">namespace</span> <span class="name">std</span> <span class="punctuation">{</span>
+<span class="keyword">namespace</span> <span class="name">experimental</span> <span class="punctuation">{</span>
+<span class="keyword">namespace</span> <span class="name">array_property</span> <span class="punctuation">{</span>
+
+<span class="keyword">template</span> <span class="operator">&lt;</span> <span class="keyword">typename</span> <span class="name">IntegralType</span> <span class="punctuation">,</span> <span class="name">IntegralType</span> <span class="punctuation">...</span> <span class="name">Dims</span><span class="operator">&gt;</span>
+<span class="keyword">struct</span> <span class="name">dimension_typed</span> <span class="punctuation">{</span>
+  <span class="comment single">// types
+</span>
+  <span class="keyword">using</span> <span class="name">size_type</span>  <span class="operator">=</span> <span class="comment multiline">/* implementation-defined */</span> <span class="punctuation">;</span>
+  <span class="keyword">using</span> <span class="name">value_type</span> <span class="operator">=</span> <span class="name">IntegralType</span> <span class="punctuation">;</span>
+
+  <span class="comment single">// constructors, copy, assignment, destructor
+</span>
+  <span class="keyword">constexpr</span> <span class="name">dimension_typed</span><span class="punctuation">()</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+
+  <span class="keyword">template</span> <span class="operator">&lt;</span><span class="keyword">typename</span><span class="punctuation">...</span> <span class="name">IntegralArgs</span><span class="operator">&gt;</span>
+  <span class="keyword">constexpr</span> <span class="name">dimension_typed</span><span class="punctuation">(</span><span class="name">IntegralArgs</span><span class="punctuation">...</span> <span class="name">dynamic_dims</span><span class="punctuation">)</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="keyword">constexpr</span> <span class="name">dimension_typed</span><span class="punctuation">(</span><span class="name">dimension_typed</span> <span class="operator">&amp;&amp;</span> <span class="name">rhs</span><span class="punctuation">)</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+  <span class="keyword">constexpr</span> <span class="name">dimension_typed</span><span class="punctuation">(</span><span class="name">dimension_typed</span> <span class="keyword">const</span><span class="operator">&amp;</span> <span class="name">rhs</span><span class="punctuation">)</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+  <span class="name">dimension_typed</span> <span class="operator">&amp;</span> <span class="keyword">operator</span><span class="operator">=</span><span class="punctuation">(</span><span class="name">dimension_typed</span> <span class="operator">&amp;&amp;</span> <span class="name">rhs</span><span class="punctuation">)</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+  <span class="name">dimension_typed</span> <span class="operator">&amp;</span> <span class="keyword">operator</span><span class="operator">=</span><span class="punctuation">(</span><span class="keyword">const</span> <span class="name">dimension_typed</span> <span class="operator">&amp;</span> <span class="name">rhs</span><span class="punctuation">)</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+
+  <span class="operator">~</span><span class="name">dimension</span><span class="punctuation">();</span>
+
+  <span class="comment single">// observers
+</span>
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="name">size_type</span> <span class="name">rank</span><span class="punctuation">()</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="name">size_type</span> <span class="name">rank_dynamic</span><span class="punctuation">()</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="keyword">template</span><span class="operator">&lt;</span> <span class="name">size_type</span> <span class="name">ith</span> <span class="operator">&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="name">value_type</span> <span class="name">static_extent</span><span class="punctuation">()</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+
+  <span class="keyword">constexpr</span> <span class="name">value_type</span> <span class="name">extent</span><span class="punctuation">(</span> <span class="name">size_type</span> <span class="name">ith</span> <span class="punctuation">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+
+  <span class="keyword">constexpr</span> <span class="name">value_type</span> <span class="name">size</span><span class="punctuation">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+<span class="punctuation">};</span>
+
+<span class="punctuation">}}}</span>
+</pre>
+<!--  -->
+<div class="line-block">
+<div class="line"><tt class="docutils literal">template &lt; typename IntegralType , IntegralType ... Dims&gt;</tt></div>
+<div class="line"><tt class="docutils literal">struct dimension_typed</tt></div>
+</div>
+<blockquote>
+<p>Requires: <tt class="docutils literal">is_integral_v&lt;IntegralType&gt;</tt> and <tt class="docutils literal">( 0 &lt;= Dims <span class="pre">)...</span></tt>.</p>
+<p>Effects:  Each non-zero <tt class="docutils literal">Dims</tt> denotes a static extent.
+Each zero <tt class="docutils literal">Dims</tt> denotes a dynamic extent..
+<tt class="docutils literal">rank() == <span class="pre">sizeof...(IntegralType)</span></tt>.
+<tt class="docutils literal">rank_dynamic()</tt> is the number of zero valued members of <tt class="docutils literal"><span class="pre">Dims...</span></tt>.</p>
+</blockquote>
+<p><tt class="docutils literal">constexpr dimension_typed() noexcept</tt></p>
+<blockquote>
+Effects: Constructs a <tt class="docutils literal">dimension_typed</tt> object such that
+the value of the ith member of <tt class="docutils literal">Dims</tt>, denoted by <tt class="docutils literal">Dims[ith]</tt>,
+is <tt class="docutils literal">Dims[ith] == <span class="pre">operator()[ith]</span></tt>.</blockquote>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">template&lt; typename ... IntegralArgs &gt;</tt></div>
+<div class="line"><tt class="docutils literal">constexpr dimension_typed( IntegralArgs ... dynamic_dim ) noexcept</tt></div>
+</div>
+<blockquote>
+<p>Requires: <tt class="docutils literal"><span class="pre">conjunction&lt;is_integral&lt;IntegralArgs&gt;::type...&gt;::value</span></tt>.
+Each <tt class="docutils literal">dynamic_dims</tt> is non-negative.
+<tt class="docutils literal"><span class="pre">sizeof...(IntegralArgs)</span> == rank_dynamic()</tt>.</p>
+<p>Effects: Constructs a <tt class="docutils literal">dimension_typed</tt> object such that
+the value of each dynamic extent is initialized by the
+corresponding value from <tt class="docutils literal"><span class="pre">dynamic_dims...</span></tt>.</p>
+</blockquote>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">template&lt; size_type ith &gt;</tt></div>
+<div class="line"><tt class="docutils literal">static constexpr value_type static_extent() noexcept ;</tt></div>
+</div>
+<blockquote>
+<p>Requires: <tt class="docutils literal">0 &lt;= ith</tt>.</p>
+<p>Returns: When <tt class="docutils literal">ith &lt; <span class="pre">sizeof...(Dims)</span></tt> value of the
+<em>ith</em> member of <tt class="docutils literal"><span class="pre">Dims...</span></tt>, otherwise 1.</p>
+</blockquote>
+<p><tt class="docutils literal">constexpr value_type extent(size_type ith) const noexcept</tt></p>
+<blockquote>
+<p>Requires: <tt class="docutils literal">0 &lt;= ith</tt>.</p>
+<p>Returns: When <tt class="docutils literal">ith &lt; rank()</tt> the <em>ith</em> extent, otherwise 1.</p>
+</blockquote>
+<p><tt class="docutils literal">constexpr value_type size() const noexcept</tt></p>
+<blockquote>
+Returns: Product of the extents.</blockquote>
+</div>
+<div class="section" id="layout-mapping-concept">
+<h3>1.2.2&nbsp;&nbsp;&nbsp;Layout Mapping Concept</h3>
+<pre class="code c++ literal-block">
+<span class="keyword">struct</span> <span class="comment multiline">/* layout_concept */</span> <span class="punctuation">{</span>
+
+  <span class="keyword">template</span><span class="operator">&lt;</span> <span class="keyword">typename</span> <span class="name">DimensionType</span> <span class="operator">&gt;</span>
+  <span class="keyword">struct</span> <span class="name label">mapping</span> <span class="punctuation">:</span> <span class="name">DimensionType</span> <span class="punctuation">{</span>
+
+    <span class="comment single">// types and constants
+</span>
+    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword type">bool</span> <span class="name">is_always_unique</span>     <span class="operator">=</span> <span class="comment multiline">/* layout specific */</span> <span class="punctuation">;</span>
+    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword type">bool</span> <span class="name">is_always_contiguous</span> <span class="operator">=</span> <span class="comment multiline">/* layout specific */</span> <span class="punctuation">;</span>
+    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword type">bool</span> <span class="name">is_always_regular</span>    <span class="operator">=</span> <span class="comment multiline">/* layout specific */</span> <span class="punctuation">;</span>
+
+    <span class="comment single">// constructors, copy, assignment, destructor
+</span>
+    <span class="keyword">constexpr</span> <span class="name">mapping</span><span class="punctuation">()</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+    <span class="keyword">constexpr</span> <span class="name">mapping</span><span class="punctuation">(</span> <span class="name">mapping</span> <span class="operator">&amp;&amp;</span> <span class="punctuation">)</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+    <span class="keyword">constexpr</span> <span class="name">mapping</span><span class="punctuation">(</span> <span class="name">mapping</span> <span class="keyword">const</span> <span class="operator">&amp;</span><span class="punctuation">)</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+    <span class="name">mapping</span> <span class="operator">&amp;</span> <span class="keyword">operator</span> <span class="operator">=</span> <span class="punctuation">(</span> <span class="name">mapping</span> <span class="operator">&amp;&amp;</span> <span class="punctuation">)</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+    <span class="name">mapping</span> <span class="operator">&amp;</span> <span class="keyword">operator</span> <span class="operator">=</span> <span class="punctuation">(</span> <span class="name">mapping</span> <span class="keyword">const</span> <span class="operator">&amp;</span><span class="punctuation">)</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+
+    <span class="keyword">constexpr</span> <span class="keyword">explicit</span> <span class="name function">mapping</span><span class="punctuation">(</span> <span class="name">layout_concept</span> <span class="keyword">const</span> <span class="operator">&amp;</span> <span class="punctuation">);</span>
+
+    <span class="keyword">template</span><span class="operator">&lt;</span> <span class="keyword">typename</span> <span class="punctuation">...</span> <span class="name">IntegralArgs</span> <span class="operator">&gt;</span>
+    <span class="keyword">constexpr</span> <span class="name">mapping</span><span class="punctuation">(</span> <span class="name">IntegralArgs</span> <span class="punctuation">...</span> <span class="name">dynamic_dimensions</span> <span class="punctuation">);</span>
+
+    <span class="comment single">// observers
+</span>
+    <span class="keyword">constexpr</span> <span class="keyword type">bool</span> <span class="name">is_unique</span><span class="punctuation">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+    <span class="keyword">constexpr</span> <span class="keyword type">bool</span> <span class="name">is_contiguous</span><span class="punctuation">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+    <span class="keyword">constexpr</span> <span class="keyword type">bool</span> <span class="name">is_regular</span><span class="punctuation">()</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+
+    <span class="keyword">constexpr</span> <span class="name">value_type</span> <span class="name">span</span><span class="punctuation">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+    <span class="keyword">constexpr</span> <span class="name">value_type</span> <span class="name">stride</span><span class="punctuation">(</span> <span class="name">size_type</span> <span class="name">ith</span> <span class="punctuation">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+
+    <span class="comment single">// mapping operator
+</span>
+    <span class="keyword">template</span><span class="operator">&lt;</span> <span class="keyword">typename</span> <span class="punctuation">...</span> <span class="name">IntegralArgs</span> <span class="operator">&gt;</span>
+    <span class="keyword">constexpr</span> <span class="name">value_type</span> <span class="keyword">operator</span><span class="punctuation">()(</span> <span class="name">IntegralArgs</span> <span class="punctuation">...</span> <span class="name">indices</span> <span class="punctuation">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+  <span class="punctuation">};</span>
+<span class="punctuation">};</span>
+</pre>
+<!--  -->
+<div class="line-block">
+<div class="line"><tt class="docutils literal">template&lt; typename DimensionType &gt;</tt></div>
+<div class="line"><tt class="docutils literal">struct mapping : DimensionType</tt></div>
+</div>
+<blockquote>
+<p>Requires: <tt class="docutils literal">DimensionType</tt> is <tt class="docutils literal">dimension_typed</tt>.</p>
+<p>Effects: The domain of the mapping is defined by a <tt class="docutils literal">DimensionType</tt> object.</p>
+</blockquote>
+<p><tt class="docutils literal">constexpr value_type <span class="pre">mapping::span()</span> const noexcept ;</tt></p>
+<blockquote>
+Returns: The upper bound for a span of integral values
+<tt class="docutils literal"><span class="pre">[0..span())</span></tt> such that the codomain of the mapping
+is a subset of this span.</blockquote>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">static constexpr bool <span class="pre">mapping::is_always_unique</span></tt></div>
+<div class="line"><tt class="docutils literal">static constexpr bool <span class="pre">mapping::is_always_contiguous</span></tt></div>
+<div class="line"><tt class="docutils literal">static constexpr bool <span class="pre">mapping::is_always_regular</span></tt></div>
+<div class="line"><tt class="docutils literal">constexpr bool <span class="pre">mapping::is_unique()</span> const noexcept ;</tt></div>
+<div class="line"><tt class="docutils literal">constexpr bool <span class="pre">mapping::is_contiguous()</span> const noexcept ;</tt></div>
+<div class="line"><tt class="docutils literal">constexpr bool <span class="pre">mapping::is_regular()</span> const noexcept ;</tt></div>
+</div>
+<blockquote>
+<p>A layout mapping is <em>unique</em> if each multi-index is mapped
+to a unique value within <tt class="docutils literal"><span class="pre">[0..span())</span></tt>.</p>
+<p>A layout mapping is <em>contiguous</em> if the codomain is equal to <tt class="docutils literal"><span class="pre">[0..span())</span></tt>.</p>
+<p>A layout mapping that is unique and contiguous is <em>bijective</em>
+and has <tt class="docutils literal">size() == span()</tt>.</p>
+<p>A <em>regular</em> layout mapping <tt class="docutils literal">M</tt> has constant striding
+between multi-index coordinates.
+Let <tt class="docutils literal"><span class="pre">indices_V...</span></tt> and <tt class="docutils literal"><span class="pre">indices_U...</span></tt> be multi-indices
+in the domain space such that all coordinates are equal except for
+the <em>ith</em> coordinate where <tt class="docutils literal">indices_V[ith] = indices_U[ith] + 1</tt>.
+Then <tt class="docutils literal">M.stride(ith) = M( <span class="pre">indices_V...</span> ) - M( <span class="pre">indices_U...</span> )</tt>
+is constant for all coordinates.</p>
+</blockquote>
+<p><tt class="docutils literal">constexpr value_type stride( size_type ith ) const noexcept ;</tt></p>
+<blockquote>
+<p>Requires: <tt class="docutils literal">is_regular()</tt>.</p>
+<p>Returns: When <tt class="docutils literal">r &lt; rank()</tt> the distance between members
+when the index of coordinate <tt class="docutils literal">r</tt> is incremented by one, otherwise 0.</p>
+</blockquote>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">template&lt; typename ... IntegralArgs &gt;</tt></div>
+<div class="line"><tt class="docutils literal">constexpr size_type <span class="pre">mapping::operator()(</span> IntegralArgs ... indices ) const noexcept ;</tt></div>
+</div>
+<blockquote>
+<p>Requires: <tt class="docutils literal"><span class="pre">conjunction&lt;is_integral&lt;IntegralArgs&gt;::type...&gt;::value</span></tt>.
+<tt class="docutils literal">rank() &lt;= <span class="pre">sizeof...(IntegralArgs)</span></tt>.
+The ith coordinate of <tt class="docutils literal"><span class="pre">indices...</span></tt>, denoted as <tt class="docutils literal">indices[ith]</tt>,
+is valid: <tt class="docutils literal"><span class="pre">0&lt;=indices[ith]&lt;extent(ith)</span></tt>.</p>
+<p>Returns: The value of the mapping from the dimension domain space
+to the <tt class="docutils literal"><span class="pre">[0..span())</span></tt> range space.</p>
+<p>Remark: An implementation may have rank-specific overloads to better
+enable optimization of the member access operator.
+Since <tt class="docutils literal"><span class="pre">extent(ith)==1</span></tt> for <tt class="docutils literal"><span class="pre">rank()&lt;=ith</span></tt> then extra zero-value
+indices are valid.</p>
+</blockquote>
+</div>
+<div class="section" id="standard-layouts">
+<h3>1.2.3&nbsp;&nbsp;&nbsp;Standard Layouts</h3>
+<p><tt class="docutils literal"><span class="pre">array_property::layout_right::mapping</span></tt></p>
+<blockquote>
+The <tt class="docutils literal"><span class="pre">layout_right::mapping</span></tt> is always bijective, regular,
+and its strides monotonically increase from right to left.
+Note that the stride of the right-most coordinate is one,
+<tt class="docutils literal"><span class="pre">stride(rank()-1)==1</span></tt>.</blockquote>
+<p><tt class="docutils literal"><span class="pre">array_property::layout_left::mapping</span></tt></p>
+<blockquote>
+The <tt class="docutils literal"><span class="pre">layout_left::mapping</span></tt> is always bijective, regular,
+and its strides monotonically increase from left to right.
+Note that the stride of the left-most coordinate is one,
+<tt class="docutils literal"><span class="pre">stride(0)==1</span></tt>.</blockquote>
+<p><tt class="docutils literal"><span class="pre">array_property::layout_stride::mapping</span></tt></p>
+<blockquote>
+<p>The <tt class="docutils literal"><span class="pre">layout_stride::mapping</span></tt> is always regular.</p>
+<p>Remark: This is typically the layout of a
+subarray obtained from a <tt class="docutils literal">layout_left</tt> or <tt class="docutils literal">layout_right</tt> array.</p>
+</blockquote>
+</div>
+</div>
+<div class="section" id="class-template-array-ref">
+<h2>1.3&nbsp;&nbsp;&nbsp;class template array_ref</h2>
+<pre class="code c++ literal-block">
+<span class="keyword">namespace</span> <span class="name">std</span> <span class="punctuation">{</span>
+<span class="keyword">namespace</span> <span class="name">experimental</span> <span class="punctuation">{</span>
+
+<span class="keyword">template</span> <span class="operator">&lt;</span><span class="keyword">typename</span> <span class="name">DataType</span><span class="punctuation">,</span> <span class="keyword">typename</span><span class="punctuation">...</span> <span class="name">Properties</span><span class="operator">&gt;</span>
+<span class="keyword">struct</span> <span class="name">array_ref</span> <span class="punctuation">{</span>
+  <span class="comment single">// types
+</span>
+  <span class="keyword">using</span> <span class="name">layout</span>     <span class="operator">=</span> <span class="comment multiline">/* deduced from Properties... */</span> <span class="punctuation">;</span>
+  <span class="keyword">using</span> <span class="name">value_type</span> <span class="operator">=</span> <span class="comment multiline">/* deduced from DataType */</span> <span class="punctuation">;</span>
+  <span class="keyword">using</span> <span class="name">reference</span>  <span class="operator">=</span> <span class="comment multiline">/* deduced from DataType and Properties... */</span> <span class="punctuation">;</span>
+  <span class="keyword">using</span> <span class="name">pointer</span>    <span class="operator">=</span> <span class="comment multiline">/* deduced from DataType */</span> <span class="punctuation">;</span>
+  <span class="keyword">using</span> <span class="name">size_type</span>  <span class="operator">=</span> <span class="comment multiline">/* implementation defined */</span> <span class="punctuation">;</span>
+
+  <span class="keyword">using</span> <span class="name">iterator</span>               <span class="operator">=</span> <span class="comment multiline">/* deduced from DataType */</span> <span class="punctuation">;</span>
+  <span class="keyword">using</span> <span class="name">const_iterator</span>         <span class="operator">=</span> <span class="comment multiline">/* deduced from DataType */</span> <span class="punctuation">;</span>
+  <span class="keyword">using</span> <span class="name">reverse_iterator</span>       <span class="operator">=</span> <span class="name">reverse_iterator</span><span class="operator">&lt;</span><span class="name">iterator</span><span class="operator">&gt;</span> <span class="punctuation">;</span>
+  <span class="keyword">using</span> <span class="name">const_reverse_iterator</span> <span class="operator">=</span> <span class="name">reverse_iterator</span><span class="operator">&lt;</span><span class="name">const_iterator</span><span class="operator">&gt;</span> <span class="punctuation">;</span>
+
+  <span class="comment single">// constructors, copy, assignment, and destructor
+</span>
+  <span class="keyword">constexpr</span> <span class="name">array_ref</span><span class="punctuation">()</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+  <span class="keyword">constexpr</span> <span class="name">array_ref</span><span class="punctuation">(</span><span class="name">array_ref</span><span class="operator">&amp;&amp;</span> <span class="name">rhs</span><span class="punctuation">)</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+  <span class="keyword">constexpr</span> <span class="name">array_ref</span><span class="punctuation">(</span><span class="name">array_ref</span> <span class="keyword">const</span><span class="operator">&amp;</span> <span class="name">rhs</span><span class="punctuation">)</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+  <span class="name">array_ref</span><span class="operator">&amp;</span> <span class="keyword">operator</span><span class="operator">=</span><span class="punctuation">(</span><span class="name">array_ref</span><span class="operator">&amp;&amp;</span> <span class="name">rhs</span> <span class="punctuation">)</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+  <span class="name">array_ref</span><span class="operator">&amp;</span> <span class="keyword">operator</span><span class="operator">=</span><span class="punctuation">(</span><span class="name">array_ref</span> <span class="keyword">const</span><span class="operator">&amp;</span> <span class="name">rhs</span> <span class="punctuation">)</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+
+  <span class="keyword">template</span> <span class="operator">&lt;</span><span class="keyword">typename</span><span class="punctuation">...</span> <span class="name">IntegralArgs</span><span class="operator">&gt;</span>
+  <span class="keyword">explicit</span> <span class="keyword">constexpr</span> <span class="name">array_ref</span><span class="punctuation">(</span><span class="name">pointer</span> <span class="name">p</span><span class="punctuation">,</span> <span class="name">IntegralArgs</span><span class="punctuation">...</span> <span class="name">dynamic_dims</span><span class="punctuation">)</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="keyword">explicit</span> <span class="keyword">constexpr</span> <span class="name">array_ref</span><span class="punctuation">(</span><span class="name">pointer</span> <span class="name">p</span><span class="punctuation">,</span> <span class="name">layout</span> <span class="keyword">const</span><span class="operator">&amp;</span><span class="punctuation">)</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="keyword">template</span> <span class="operator">&lt;</span><span class="keyword">typename</span> <span class="name">UType</span><span class="punctuation">,</span> <span class="keyword">typename</span> <span class="punctuation">...</span> <span class="name">UProperties</span><span class="operator">&gt;</span>
+  <span class="keyword">constexpr</span> <span class="name">array_ref</span><span class="punctuation">(</span><span class="name">array_ref</span><span class="operator">&lt;</span><span class="name">UType</span><span class="punctuation">,</span> <span class="name">UProperties</span><span class="punctuation">...</span><span class="operator">&gt;</span> <span class="keyword">const</span><span class="operator">&amp;</span> <span class="name">rhs</span><span class="punctuation">)</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="keyword">template</span> <span class="operator">&lt;</span><span class="keyword">typename</span> <span class="name">UType</span><span class="punctuation">,</span> <span class="keyword">typename</span> <span class="punctuation">...</span> <span class="name">UProperties</span><span class="operator">&gt;</span>
+  <span class="name">array_ref</span><span class="operator">&amp;</span> <span class="keyword">operator</span><span class="operator">=</span><span class="punctuation">(</span><span class="name">array_ref</span><span class="operator">&lt;</span><span class="name">UType</span> <span class="punctuation">,</span> <span class="name">UProperties</span><span class="punctuation">...</span><span class="operator">&gt;</span> <span class="keyword">const</span><span class="operator">&amp;</span> <span class="name">rhs</span><span class="punctuation">)</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="operator">~</span><span class="name">array_ref</span><span class="punctuation">()</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+
+  <span class="comment single">// observers of domain index space
+</span>
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="name">size_type</span> <span class="name">rank</span><span class="punctuation">()</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="name">size_type</span> <span class="name">rank_dynamic</span><span class="punctuation">()</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="keyword">constexpr</span> <span class="name">size_type</span> <span class="name">size</span><span class="punctuation">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="keyword">constexpr</span> <span class="name">size_type</span> <span class="name">extent</span><span class="punctuation">(</span><span class="name">size_type</span> <span class="name">ith</span><span class="punctuation">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="comment single">// observers of mapping from domain index space to range value space
+</span>
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword type">bool</span> <span class="name">is_always_unique</span>     <span class="operator">=</span> <span class="comment multiline">/* deduced */</span> <span class="punctuation">;</span>
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword type">bool</span> <span class="name">is_always_contiguous</span> <span class="operator">=</span> <span class="comment multiline">/* deduced */</span> <span class="punctuation">;</span>
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword type">bool</span> <span class="name">is_always_regular</span>    <span class="operator">=</span> <span class="comment multiline">/* deduced */</span> <span class="punctuation">;</span>
+
+  <span class="keyword">constexpr</span> <span class="keyword type">bool</span> <span class="name">is_unique</span><span class="punctuation">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+  <span class="keyword">constexpr</span> <span class="keyword type">bool</span> <span class="name">is_contiguous</span><span class="punctuation">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+  <span class="keyword">constexpr</span> <span class="keyword type">bool</span> <span class="name">is_regular</span><span class="punctuation">()</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="keyword">constexpr</span> <span class="name">size_type</span> <span class="name">stride</span><span class="punctuation">(</span><span class="name">size_type</span> <span class="name">rank</span><span class="punctuation">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="keyword">constexpr</span> <span class="name">size_type</span> <span class="name">span</span><span class="punctuation">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="keyword">template</span> <span class="operator">&lt;</span><span class="keyword">typename</span><span class="punctuation">...</span> <span class="name">IntegralArgs</span><span class="operator">&gt;</span>
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="name">size_type</span> <span class="name">required_span</span><span class="punctuation">(</span> <span class="name">IntegralArgs</span> <span class="punctuation">...</span> <span class="name">dynamic_dims</span> <span class="punctuation">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="name">size_type</span> <span class="name">required_span</span><span class="punctuation">(</span> <span class="name">layout</span> <span class="keyword">const</span> <span class="operator">&amp;</span> <span class="punctuation">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="comment single">// element and data access
+</span>
+  <span class="keyword">constexpr</span> <span class="name">pointer</span> <span class="name">data</span><span class="punctuation">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="keyword">template</span> <span class="operator">&lt;</span><span class="keyword">typename</span><span class="punctuation">...</span> <span class="name">IntegralArgs</span><span class="operator">&gt;</span>
+  <span class="name">reference</span> <span class="keyword">operator</span><span class="punctuation">()(</span><span class="name">IntegralArgs</span><span class="punctuation">...</span> <span class="name">indices</span><span class="punctuation">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="name">reference</span> <span class="keyword">operator</span><span class="punctuation">[](</span><span class="name">size_type</span> <span class="name">idx</span><span class="punctuation">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="punctuation">;</span>
+
+  <span class="comment single">// iterator support, requires is_contiguous
+</span>
+  <span class="keyword">constexpr</span> <span class="name">iterator</span> <span class="name">begin</span><span class="punctuation">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+  <span class="keyword">constexpr</span> <span class="name">iterator</span> <span class="name">end</span><span class="punctuation">()</span>   <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+  <span class="keyword">constexpr</span> <span class="name">const_iterator</span> <span class="name">cbegin</span><span class="punctuation">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+  <span class="keyword">constexpr</span> <span class="name">const_iterator</span> <span class="name">cend</span><span class="punctuation">()</span>   <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+  <span class="keyword">constexpr</span> <span class="name">reverse_iterator</span> <span class="name">rbegin</span><span class="punctuation">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+  <span class="keyword">constexpr</span> <span class="name">reverse_iterator</span> <span class="name">rend</span><span class="punctuation">()</span>   <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+  <span class="keyword">constexpr</span> <span class="name">const_reverse_iterator</span> <span class="name">crbegin</span><span class="punctuation">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+  <span class="keyword">constexpr</span> <span class="name">const_reverse_iterator</span> <span class="name">crend</span><span class="punctuation">()</span>   <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="punctuation">;</span>
+<span class="punctuation">};</span>
+
+<span class="punctuation">}}</span>
+</pre>
+<!--  -->
+<div class="section" id="template-arguments">
+<h3>1.3.1&nbsp;&nbsp;&nbsp;Template arguments</h3>
+<p><tt class="docutils literal">array_ref</tt> accepts the <tt class="docutils literal">DataType</tt> and <tt class="docutils literal"><span class="pre">Properties...</span></tt>
+template arguments.</p>
+<p><tt class="docutils literal">DataType</tt></p>
+<blockquote>
+<p><tt class="docutils literal">DataType</tt> declares the type of array elements and optionally
+the dimension of the array, if those dimensions can be expressed
+as an array type (8.3.4.p3).</p>
+<p>Requires: The <tt class="docutils literal">DataType</tt> argument is either an array type (8.3.4.p3)
+or complete object type.</p>
+</blockquote>
+<p><tt class="docutils literal"><span class="pre">Properties...</span></tt></p>
+<blockquote>
+<p>The <tt class="docutils literal"><span class="pre">Properties...</span></tt> argument is a pack of array properties.</p>
+<p>Requires: <tt class="docutils literal"><span class="pre">array_property::is_array_property_v&lt;</span> Properties &gt;</tt>
+for every member of the pack.
+If <tt class="docutils literal">DataType</tt> is an array type then  <tt class="docutils literal"><span class="pre">Properties...</span></tt>
+shall not contain an <tt class="docutils literal"><span class="pre">array_property::dimension</span></tt> and the array
+dimensions are deduced from <tt class="docutils literal">DataType</tt>.</p>
+</blockquote>
+</div>
+<div class="section" id="array-dimensions">
+<h3>1.3.2&nbsp;&nbsp;&nbsp;Array Dimensions</h3>
+<blockquote>
+<p>The dimensions of an instantiated <tt class="docutils literal">array_ref</tt> type are defined
+by either the <tt class="docutils literal">DataType</tt> array type (8.3.4.p3) or an
+<tt class="docutils literal"><span class="pre">array_property::dimension</span></tt> type in the <tt class="docutils literal"><span class="pre">Properties...</span></tt> pack.</p>
+<p>If <tt class="docutils literal">DataType</tt> is an array type each declared extent <tt class="docutils literal">[N]</tt> denotes
+a static extent and each omitted extent <tt class="docutils literal">[ ]</tt> denotes
+a dynamic extent.
+For example, <tt class="docutils literal">array_ref&lt;double[ <span class="pre">][3][8]&gt;</span></tt>
+declares a rank-three array with
+dynamic extent in coordinate zero,
+static extent of 3 in coordinate one, and
+static extent of 8 in coordinate two.</p>
+<p>If an <tt class="docutils literal"><span class="pre">array_property::dimension</span></tt> is given then each
+positive integral value denotes a static extent and
+each zero value denotes a dynamic extent.
+For example, <tt class="docutils literal"><span class="pre">array_ref&lt;double,array_property::dimension&lt;0,3,8&gt;</span> &gt;</tt>
+declares a rank-three array with
+dynamic extent in coordinate zero,
+static extent of 3 in coordinate one, and
+static extent of 8 in coordinate two.</p>
+<p>If <tt class="docutils literal">DataType</tt> is a complete object type and no <tt class="docutils literal">dimension</tt>
+is given then the array is rank-zero.</p>
+</blockquote>
+</div>
+<div class="section" id="types">
+<h3>1.3.3&nbsp;&nbsp;&nbsp;Types</h3>
+<p><tt class="docutils literal">using layout = /* deduced from <span class="pre">Properties...</span> */ ;</tt></p>
+<blockquote>
+Layout property of the array.
+If <tt class="docutils literal"><span class="pre">Properties...</span></tt> does not include a layout property then
+<tt class="docutils literal">layout</tt> is <tt class="docutils literal">void</tt>.</blockquote>
+<p><tt class="docutils literal">using value_type = /* deduced from DataType */ ;</tt></p>
+<blockquote>
+<p>Type of the objects referenced by the array.</p>
+<p>Remark: A likely implementation is
+<tt class="docutils literal">using value_type = typename <span class="pre">std::remove_all_extents&lt;</span> DataType <span class="pre">&gt;::type</span></tt>.</p>
+</blockquote>
+<p><tt class="docutils literal">using reference = /* deduced from DataType and <span class="pre">Properties...</span> */ ;</tt></p>
+<blockquote>
+The type returned by the member access operator.
+Typically this will be <tt class="docutils literal">value_type&amp;</tt>.
+The <em>constness</em> of the refenced objects is defined by the <em>constness</em>
+of <tt class="docutils literal">value_type</tt>.
+For example, references to objects of
+<tt class="docutils literal">array_ref&lt;const <span class="pre">double[][3][8]&gt;</span></tt>
+are const.
+[Note: The reference type may be a proxy depending upon  <tt class="docutils literal"><span class="pre">Properties...</span></tt>.
+For example, if a property indicates that all member references
+are to be atomic then the reference type would be a
+proxy conforming to <em>atomic-view-concept</em> introduced in paper P0019.
+- end note]</blockquote>
+<p><tt class="docutils literal">using pointer = /* deduced from DataType */ ;</tt></p>
+<blockquote>
+The input type to a wrapping constructor.
+Typically this will be <tt class="docutils literal">value_type*</tt>.</blockquote>
+<p><tt class="docutils literal">using size_type = /* implementation defined */ ;</tt></p>
+<blockquote>
+The type used for extents.</blockquote>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">using iterator = /* deduced from DataType and Properties */ ;</tt></div>
+<div class="line"><tt class="docutils literal">using const_iterator = /* deduced from DataType and Properties */ ;</tt></div>
+</div>
+<blockquote>
+The type used to iterate elements of a a contiguous array.</blockquote>
+</div>
+<div class="section" id="constructors-copy-assignment-destructor">
+<h3>1.3.4&nbsp;&nbsp;&nbsp;Constructors, copy, assignment, destructor</h3>
+<p><tt class="docutils literal">constexpr array_ref() noexcept</tt></p>
+<blockquote>
+Effect: Construct a <em>null</em> <tt class="docutils literal">array_ref</tt> with <tt class="docutils literal">data() == nullptr</tt>
+and <tt class="docutils literal">extent(i) == 0</tt> for all dynamic dimensions.</blockquote>
+<p><tt class="docutils literal">constexpr array_ref( const array_ref &amp; rhs ) noexcept</tt></p>
+<blockquote>
+<p>Effect: Construct an <tt class="docutils literal">array_ref</tt> of the same span of objects
+referenced by <tt class="docutils literal">rhs</tt>.</p>
+<p>Remark: There may be other <tt class="docutils literal"><span class="pre">Properties...</span></tt> dependent effects.</p>
+</blockquote>
+<p><tt class="docutils literal">constexpr array_ref( array_ref &amp;&amp; rhs ) noexcept</tt></p>
+<blockquote>
+<p>Effect: Construct an <tt class="docutils literal">array_ref</tt> the span of objects
+referenced by <tt class="docutils literal">rhs</tt> and then <tt class="docutils literal">rhs</tt> is a <em>null</em> <tt class="docutils literal">array_ref</tt>.</p>
+<p>Remark: There may be other <tt class="docutils literal"><span class="pre">Properties...</span></tt> dependent effects.</p>
+</blockquote>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">template&lt; typename UType , typename ... UProperties &gt;</tt></div>
+<div class="line"><tt class="docutils literal">constexpr array_ref( const array_ref&lt; UType , UProperties ... &gt; &amp; rhs ) noexcept</tt></div>
+</div>
+<blockquote>
+<p>Requires:
+<tt class="docutils literal"><span class="pre">array_properties::is_assignable_v&lt;</span> array_ref , array_ref&lt; UType , UProperties ... &gt; &gt;</tt>
+Each static extent of <tt class="docutils literal">*this</tt> is equal to the corresponding
+extent of <tt class="docutils literal">rhs</tt>.</p>
+<p>Effect: Construct an <tt class="docutils literal">array_ref</tt> of the same span of objects
+referenced by <tt class="docutils literal">rhs</tt>.</p>
+<p>Remark: There may be other <tt class="docutils literal"><span class="pre">Properties...</span></tt> dependent effects.</p>
+</blockquote>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">template&lt; typename UType , typename ... UProperties &gt;</tt></div>
+<div class="line"><tt class="docutils literal">array_ref &amp; operator = ( const array_ref&lt; UType , UProperties ... &gt; &amp; rhs ) noexcept</tt></div>
+</div>
+<blockquote>
+<p>Requires:
+<tt class="docutils literal"><span class="pre">array_properties::is_assignable_v&lt;</span> array_ref , array_ref&lt; UType , UProperties ... &gt; &gt;</tt>.
+Each static extent of <tt class="docutils literal">*this</tt> is equal to the corresponding
+extent of <tt class="docutils literal">rhs</tt>.</p>
+<p>Effect: Construct an <tt class="docutils literal">array_ref</tt> the span of objects
+referenced by <tt class="docutils literal">rhs</tt> and then <tt class="docutils literal">rhs</tt> is a <em>null</em> <tt class="docutils literal">array_ref</tt>.</p>
+<p>Remark: There may be other <tt class="docutils literal"><span class="pre">Properties...</span></tt> dependent effects.</p>
+</blockquote>
+<p><tt class="docutils literal">array_ref &amp; operator = ( const array_ref &amp; rhs ) noexcept</tt></p>
+<blockquote>
+<p>Effect: Assigns <tt class="docutils literal">this</tt> to reference the same span of objects
+referenced  by <tt class="docutils literal">rhs</tt>.</p>
+<p>Remark: There may be other <tt class="docutils literal"><span class="pre">Properties...</span></tt> dependent effects.</p>
+</blockquote>
+<p><tt class="docutils literal">array_ref &amp; operator = ( array_ref &amp;&amp; rhs ) noexcept = default</tt></p>
+<blockquote>
+<p>Effect: Assigns <tt class="docutils literal">this</tt> to reference the same span of objects
+referenced by <tt class="docutils literal">rhs</tt> and then <tt class="docutils literal">rhs</tt> is a <em>null</em> <tt class="docutils literal">array_ref</tt>.</p>
+<p>Remark: There may be other <tt class="docutils literal"><span class="pre">Properties...</span></tt> dependent effects.</p>
+</blockquote>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">template&lt; typename ... IntegralArgs &gt;</tt></div>
+<div class="line"><tt class="docutils literal">constexpr array_ref( pointer ptr , IntegralArgs ... dynamic_dims ) noexcept</tt></div>
+</div>
+<blockquote>
+<p>Requires: <tt class="docutils literal"><span class="pre">conjunction&lt;is_integral&lt;IntegralArgs&gt;::type...&gt;::value</span></tt>.
+Each <tt class="docutils literal">dynamic_dims</tt> is non-negative.
+The span of objects denoted by <tt class="docutils literal">[ ptr , ptr + S )</tt>,
+where S = <tt class="docutils literal"><span class="pre">array_ref::required_span(</span> <span class="pre">dymamic_dims...</span> )</tt>,
+shall be a valid contiguous span of objects.</p>
+<p>Remark: Shall not participate in overload resolution unless all IntegralArgs
+are integral types.</p>
+<p>Effects: The <em>wrapping constructor</em> constructs a multidimensional array
+reference into the contiguous span of objects denoted by
+<tt class="docutils literal">[ ptr , ptr + S )</tt> where S = <tt class="docutils literal"><span class="pre">array_ref::span()</span></tt> for <tt class="docutils literal">this</tt>.
+The dimensions of the array are defined by replacing in order
+each dynamic extent in the <tt class="docutils literal">array_ref</tt> type with a value from
+<tt class="docutils literal"><span class="pre">dynamic_dims...</span></tt>.</p>
+</blockquote>
+<p><tt class="docutils literal">constexpr array_ref( pointer ptr , layout const&amp; lay ) noexcept</tt></p>
+<blockquote>
+<p>Requires: The span of objects denoted by <tt class="docutils literal">[ ptr , ptr + S )</tt>,
+where S = <tt class="docutils literal"><span class="pre">array_ref::required_span(</span> lay )</tt>,
+shall be a valid contiguous span of objects.</p>
+<p>Effects: The <em>wrapping constructor</em> constructs a multidimensional array
+reference of the given member memory
+such that all data members are in the span <tt class="docutils literal">[ ptr , ptr + lay.span() )</tt>.</p>
+</blockquote>
+<p><tt class="docutils literal">~array_ref()</tt></p>
+<blockquote>
+<p>Effect: Assigns <tt class="docutils literal">this</tt> to be a <em>null</em> <tt class="docutils literal">array_ref</tt>.</p>
+<p>Remark: There may be other <tt class="docutils literal"><span class="pre">Properties...</span></tt> dependent effects.</p>
+</blockquote>
+</div>
+<div class="section" id="observers-of-the-domain-index-space">
+<h3>1.3.5&nbsp;&nbsp;&nbsp;Observers of the domain index space</h3>
+<p>Observers of the domain index space correspond to the
+observers of <tt class="docutils literal"><span class="pre">array_property::dimension_typed</span></tt>.</p>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">static constexpr size_type rank() noexcept</tt></div>
+<div class="line"><tt class="docutils literal">static constexpr size_type rank_dynamic() noexcept</tt></div>
+<div class="line"><tt class="docutils literal">constexpr size_type extent( size_type ith ) const noexcept</tt></div>
+<div class="line"><tt class="docutils literal">constexpr size_type size() const noexcept</tt></div>
+</div>
+</div>
+<div class="section" id="observers-of-the-layout-mapping">
+<h3>1.3.6&nbsp;&nbsp;&nbsp;Observers of the layout mapping</h3>
+<p>Observers of the layout mapping correspond to
+observers of <tt class="docutils literal"><span class="pre">array_property::/*layout_concept*/::mapping</span></tt>.</p>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">static constexpr bool is_always_unique</tt></div>
+<div class="line"><tt class="docutils literal">static constexpr bool is_always_contiguous</tt></div>
+<div class="line"><tt class="docutils literal">static constexpr bool is_always_regular</tt></div>
+<div class="line"><tt class="docutils literal">constexpr bool is_unique() const noexcept ;</tt></div>
+<div class="line"><tt class="docutils literal">constexpr bool is_contiguous() const noexcept ;</tt></div>
+<div class="line"><tt class="docutils literal">constexpr bool:is_regular() const noexcept ;</tt></div>
+<div class="line"><tt class="docutils literal">constexpr size_type span() const noexcept ;</tt></div>
+<div class="line"><tt class="docutils literal">template&lt; typename IntegralType &gt;</tt></div>
+<div class="line"><tt class="docutils literal">constexpr size_type stride( IntegralType index ) const noexcept</tt></div>
+</div>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">template&lt; typename ... IntegralArgs &gt;</tt></div>
+<div class="line"><tt class="docutils literal">static constexpr size_type required_span( IntegralArgs ... dynamic_dims ) noexcept</tt></div>
+</div>
+<blockquote>
+<p>Requires: <tt class="docutils literal"><span class="pre">conjunction&lt;is_integral&lt;IntegralArgs&gt;::type...&gt;::value</span></tt>.
+Each <tt class="docutils literal">dynamic_dims</tt> is non-negative.</p>
+<p>Returns: Required length of contiguous span of objects
+for the <em>wrapping constructor</em>.
+The dimensions of the array are defined by replacing in order
+each dynamic extent in the <tt class="docutils literal">array_ref</tt> type with a value from
+<tt class="docutils literal"><span class="pre">dynamic_dims...</span></tt>.</p>
+<p>Remark: As if constructing the corresponding layout mapping
+with the <tt class="docutils literal"><span class="pre">dynamic_dims...`</span> and querying the ``span()</tt> of this object.</p>
+</blockquote>
+<p><tt class="docutils literal">static constexpr size_type required_span( layout const &amp; ) noexcept</tt></p>
+<blockquote>
+<p>Returns: Required length of contiguous span of objects
+for the <em>wrapping constructor</em>.</p>
+<p>Remark: As if constructing the corresponding layout mapping
+with the layout and querying the <tt class="docutils literal">span()</tt> of this object.</p>
+</blockquote>
+</div>
+<div class="section" id="element-and-data-access">
+<h3>1.3.7&nbsp;&nbsp;&nbsp;Element and data access</h3>
+<p><tt class="docutils literal">constexpr pointer data() const noexcept</tt></p>
+<blockquote>
+Returns: Pointer to the member object with the minimum location
+in the span of the array.</blockquote>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">template&lt; typename ... IntegralArgs &gt;</tt></div>
+<div class="line"><tt class="docutils literal">reference <span class="pre">operator()(</span> IntegralArgs ... indices ) const noexcept</tt></div>
+</div>
+<blockquote>
+<p>Requires: <tt class="docutils literal"><span class="pre">conjunction&lt;is_integral&lt;IntegralArgs&gt;::type...&gt;::value</span></tt>.
+<tt class="docutils literal">rank() &lt;= <span class="pre">sizeof...(IntegralArgs)</span></tt>.
+The ith coordinate of <tt class="docutils literal"><span class="pre">indices...</span></tt>, denoted as <tt class="docutils literal">indices[ith]</tt>,
+is valid: <tt class="docutils literal">0 &lt;= indices[ith] &lt; extent(ith)</tt>.</p>
+<p>Returns: A reference to the member object referenced by <tt class="docutils literal"><span class="pre">indices...</span></tt>.</p>
+<p>Remark: An implementation may have rank-specific overloads to better
+enable optimization of the member access operator.
+Since <tt class="docutils literal">extent(ith) == 1</tt> for <tt class="docutils literal">rank() &lt;= ith</tt> then extra zero-value
+indices are valid.</p>
+</blockquote>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">template&lt; typename IntegralType &gt;</tt></div>
+<div class="line"><tt class="docutils literal">reference <span class="pre">operator[](</span> IntegralType index ) const noexcept</tt></div>
+</div>
+<blockquote>
+<p>Requires: <tt class="docutils literal"><span class="pre">is_integral&lt;IntegralType&gt;::value</span></tt>.
+<tt class="docutils literal">rank() == 1</tt>.
+<tt class="docutils literal">0 &lt;= i &lt; extent(0)</tt>.</p>
+<p>Returns: A reference to the member object referenced by <tt class="docutils literal">index</tt>.</p>
+<p>Requires: 0 &lt;= i &lt; extent(0)</p>
+</blockquote>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">constexpr iterator begin() const noexecept</tt></div>
+<div class="line"><tt class="docutils literal">constexpr iterator end() const noexecept</tt></div>
+<div class="line"><tt class="docutils literal">constexpr const_iterator cbegin() const noexecept</tt></div>
+<div class="line"><tt class="docutils literal">constexpr const_iterator cend() const noexecept</tt></div>
+<div class="line"><tt class="docutils literal">constexpr reverse_iterator rbegin() const noexecept</tt></div>
+<div class="line"><tt class="docutils literal">constexpr reverse_iterator rend() const noexecept</tt></div>
+<div class="line"><tt class="docutils literal">constexpr reverse_const_iterator crbegin() const noexecept</tt></div>
+<div class="line"><tt class="docutils literal">constexpr reverse_const_iterator crend() const noexecept</tt></div>
+</div>
+<blockquote>
+<p>Requires: <tt class="docutils literal">is_contiguous()</tt></p>
+<p>Returns: iterator for member objects <tt class="docutils literal"><span class="pre">[data(),data()+span())</span></tt>.</p>
+<p>Remark: The order of iteration is unspecified and layout dependent.
+If the layout mapping <strong>is</strong> unique then iterating the span
+is equivalent to iterating all indices of the domain
+multidimensional index space.</p>
+</blockquote>
+</div>
+</div>
+<div class="section" id="array-property-is-assignable-meta-function">
+<h2>1.4&nbsp;&nbsp;&nbsp;array_property::is_assignable meta-function</h2>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">template&lt; class array_ref_V , class array_ref_U &gt;</tt></div>
+<div class="line"><tt class="docutils literal"><span class="pre">array_property::is_assignable&lt;</span> array_ref_V , array_ref_U &gt;</tt></div>
+</div>
+<blockquote>
+<p>Requires:
+<tt class="docutils literal">array_ref_V</tt> is <tt class="docutils literal">array_ref&lt; DataType_V , <span class="pre">Properties_V...</span> &gt;</tt>
+<tt class="docutils literal">array_ref_U</tt> is <tt class="docutils literal">array_ref&lt; DataType_U , <span class="pre">Properties_U...</span> &gt;</tt></p>
+<p>Returns:
+Deduce the potential assignability of <tt class="docutils literal">array_ref</tt> objects from
+their <tt class="docutils literal">DataType</tt> and <tt class="docutils literal"><span class="pre">Properties...</span></tt>.
+A <tt class="docutils literal">true_type</tt> result requires assignability of the value type,
+equal rank, and compatibility of extents.
+A dynamic extent may be assigned from a static extent or dynamic extent.
+A static extent may only be <em>assigned</em> from an equal value static extent.
+A static extent is potentially <em>assignable</em> from a dynamic extent,
+if the dynamic extent has equal value.</p>
+<p>Indicates if objects potentially non-identical <tt class="docutils literal">array_ref</tt> types are assignable.</p>
+<p>Assignability is deduced from properties of the array_ref.</p>
+</blockquote>
+</div>
+<div class="section" id="array-property-bounds-check">
+<h2>1.5&nbsp;&nbsp;&nbsp;array_property::bounds_check</h2>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">template&lt; bool Enable &gt; struct bounds_check_if ;</tt></div>
+<div class="line"><tt class="docutils literal">using bounds_check = bounds_check&lt;true&gt; ;</tt></div>
+</div>
+<blockquote>
+When <tt class="docutils literal">array_ref</tt> <tt class="docutils literal"><span class="pre">Properties...</span></tt> includes
+<tt class="docutils literal">bounds_check_if&lt;true&gt;</tt> then the mapping operators
+<tt class="docutils literal"><span class="pre">array_ref::operator()</span></tt> and <tt class="docutils literal"><span class="pre">array_ref::operator[]</span></tt>
+verify that each index is valid,
+<tt class="docutils literal">0 &lt;= indices[ith] &lt; extent(ith)</tt>.
+Verification failure shall be reported.</blockquote>
+</div>
+<div class="section" id="subarrays">
+<h2>1.6&nbsp;&nbsp;&nbsp;subarrays</h2>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">template&lt; typename DataType , typename ... Properties , typename ... SliceSpecifiers &gt;</tt></div>
+<div class="line"><tt class="docutils literal">array_ref&lt; /* deduced */ &gt;</tt></div>
+<div class="line"><tt class="docutils literal">subarray( array_ref&lt; DataType, Properties ... &gt; const &amp; ar , SliceSpecifiers ... specs) noexcept</tt></div>
+</div>
+<blockquote>
+<p>Requires: <tt class="docutils literal">ar.rank() == <span class="pre">sizeof...(SliceSpecifiers)</span></tt>.
+The <em>ith</em> member of the <tt class="docutils literal"><span class="pre">SliceSpecifier...specs</span></tt> argument pack
+is an integral <em>value</em> or an integral <em>range</em> denoted by
+one of the following.</p>
+<ul class="simple">
+<li>an <tt class="docutils literal">initializer_list&lt;T&gt;</tt> of integral type <tt class="docutils literal">T</tt> and size 2</li>
+<li>a <tt class="docutils literal">pair&lt;T,T&gt;</tt> of integral type <tt class="docutils literal">T</tt></li>
+<li>a <tt class="docutils literal">tuple&lt;T,T&gt;</tt>  of integral type <tt class="docutils literal">T</tt></li>
+<li>an <tt class="docutils literal">array&lt;T,2&gt;</tt> of integral type <tt class="docutils literal">T</tt></li>
+<li><tt class="docutils literal"><span class="pre">array_property::all</span></tt> which denotes <tt class="docutils literal"><span class="pre">[0..extent(ith))</span></tt></li>
+</ul>
+<p>The <em>ith</em> member of <tt class="docutils literal"><span class="pre">SliceSpecifiers...specs</span></tt> must be within the range <tt class="docutils literal">[0,ar.extent(ith))</tt>.</p>
+<ul class="simple">
+<li>If an integral value then 0 &lt;= <em>value</em> &lt; <tt class="docutils literal">ar.extent(ith)</tt></li>
+<li>If an integral range then 0 &lt;= <em>begin</em> &lt;= <em>end</em> &lt;= <tt class="docutils literal">ar.extent(ith)</tt></li>
+</ul>
+<p>Returns: An <tt class="docutils literal">array_ref</tt> referring into the same memory extent as <tt class="docutils literal">ar</tt>,
+with dimensions, layout, and other properties  deduced from <tt class="docutils literal">ar</tt> and
+the <tt class="docutils literal"><span class="pre">SlicerSpecifier...specs</span></tt> argument pack.
+The returned <tt class="docutils literal">array_ref</tt> <tt class="docutils literal">rank()</tt> is one less than the rank of <tt class="docutils literal">ar</tt>
+for each member of the argument pack that is an integral value.
+The returned <tt class="docutils literal">array_ref</tt> <tt class="docutils literal">extent(ith)</tt> is equal to <strong>end-begin</strong>
+of the <em>ith</em> integral range argument</p>
+<p>Remark: Subarray type deduction should generate an <tt class="docutils literal">array_ref</tt>
+with the best performing layout mapping.
+A generated subarray <tt class="docutils literal">array_ref</tt> that is always given
+<tt class="docutils literal">layout_stride</tt> will be less performant than a equivalent
+subarray with <tt class="docutils literal">layout_right</tt> or <tt class="docutils literal">layout_left</tt>.</p>
+</blockquote>
+</div>
+</div>
+</div>
+</body>
+</html>
