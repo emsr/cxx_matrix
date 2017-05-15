@@ -1,7 +1,8 @@
 
-// $HOME/bin/bin/g++ -o test_matrix test_matrix.cpp
-
-// LD_LIBRARY_PATH=$HOME/bin/lib64:$LD_LIBRARY_PATH ./test_matrix
+/*
+$HOME/bin/bin/g++ -o test_matrix test_matrix.cpp
+LD_LIBRARY_PATH=$HOME/bin/lib64:$LD_LIBRARY_PATH ./test_matrix
+*/
 
 #include <iostream>
 #include <iomanip>
@@ -18,8 +19,10 @@
 int
 main()
 {
+
   const std::size_t M = 3, N = 3;
-  double a[M][N]{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+  double a_sing[M][N]{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+  double a[M][N]{{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
   auto detA = a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1])
             + a[0][1] * (a[1][2] * a[2][0] - a[1][0] * a[2][2])
             + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0]);
@@ -70,10 +73,10 @@ main()
       {
         I[i][j] = 0.0;
         for (int k  = 0; k < 3; ++k)
-          I[i][j] += a[i][k] * a_inv[k][j];
+          I[i][j] += a_inv[i][k] * a[k][j];
       }
 
-  std::cout << "\nA.A^-1\n";
+  std::cout << "\nA^-1.A\n";
   for (auto & row : I)
     {
       for (auto & col : row)
