@@ -1,0 +1,46 @@
+#
+#		MV++ (V 1.0 Beta)
+# 		(c) 1993-1994 Roldan Pozo All Rights Reserved.
+#
+
+
+
+INCLUDES 	= -I../include
+
+
+# Templated version
+#
+TEMPLATE_SRCS	= tblas1.cc	\
+		  tmat.cc	\
+		  tmat2.cc	\
+		  tvec.cc
+
+
+SRCS = $(TEMPLATE_SRCS)
+
+EXECS = tblas1 tmat tmat2 tvec
+
+all: $(EXECS)
+
+
+tblas1 : tblas1.cc
+	$(CCC) -o tblas1 $(INCLUDES) tblas1.cc
+
+tmat2: tmat2.cc
+	$(CCC) -o tmat2 $(INCLUDES) tmat2.cc
+
+tvec: tvec.cc
+	$(CCC) -o tvec $(INCLUDES) tvec.cc
+
+
+tmat: tmat.cc
+	$(CCC) -o tmat $(INCLUDES) tmat.cc
+
+
+clean:
+	/bin/rm -f core  $(EXECS);
+	/bin/rm -r -f ptrepository
+
+
+
+
