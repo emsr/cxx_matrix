@@ -1,0 +1,111 @@
+//      MV++  (V. 1.2b Beta)
+//      Numerical Matrix/MV_Vector Class Library
+//      (c) 1994  Roldan Pozo
+//
+
+
+         MV++ :  Numerical Matrix/Vector Classes in C++
+
+
+MV++ is a small, efficient, set of concrete vector and simple matrix
+classes for numerical computing.  It is not intended as a general
+vector container class, but rather designed  specifically for optimized
+numerical computations on RISC and pipelined architectures.  It is one
+step above a C/C++ array, altough it supports subvector/matrix expressions.
+
+It includes several of the computational kernels found in the 
+Basic Linear Algebra Subprograms (BLAS), such as scalar updates,
+vector sums, dot products and so on. 
+
+These classes are the building blocks of larger user-level libraries such 
+as SparseLib++ and Lapack++.
+
+
+1) More About MV++
+------------------
+i) User's Guide and man-style pages are in  ./docs
+ii) Code examples are in ./testing/*.cc
+
+
+
+2a) Installating Non-tempated MV++ library (float, double, and complex)
+------------------------------------------
+
+i)   cd to root directory where MV++ is installed, <mv++>
+ii)  edit makefile.def to specify your specify your particular C++ compiler
+iii) type "make mv"; "make" by itself will provide a list of options.
+
+
+
+2b) Installing Templated MV++ libraries
+---------------------------------------
+i) there's no library to build; they're all in header files.
+   **NOTE: Be aware that some compilers (particularly early ones) have 
+   difficulty with proper template instantiations. If you experience
+   problems, use the non-templated version. ***
+
+
+
+3) Testing MV++
+---------------
+
+i) cd to <mv++>
+iia) "make test" will run a test suites and leave their output in 
+	           	<mv++>/testing/mv_test.out.  
+or
+
+iib) "make templated_test" will run same test suites using the templated
+	version of MV++.  Output is in 
+			   <mv++>/testing/templated_mv_test.out
+
+
+
+4) Using MV++
+----------
+
+i)   all MV++ include files are in <mv++>/include.
+ii)  non-templated MV++ library is in <mv++>/lib/mvlib.a
+iii) to extend non-templated MV++ for vector and matrices of user-defined 
+		classes, see mv_vector_type.h, mv_matrix_type.h in <mv++>/include.
+		These can easily modified with an editor, replacing "TYPE" with your
+		specific class name.
+
+
+5) Help!
+--------
+
+Questions, comments, suggestions, etc. can be sent to pozo@cam.nist.gov.
+
+
+
+Questions and Answers:
+---------------------
+
+o) What types does the non-templated MV++ classes support?
+
+Float, double, int, and complex.
+
+
+o) How do I extend the non-templated MV++ classes to my own data types?
+
+Edit mv_vector_type.h in <mv++>/include and change every occurence of
+"TYPE" to the name of your numerical class.  (Don't use cpp or m4
+for this, as you'll need to change "TYPE" in word segments as well.)
+One easy way is
+
+  sed '1,$s/TYPE/Large_Real/g' mv_vector_type.cc > mv_vector_Large_Real.cc
+
+Do the same for mv_vector_type.cc in <mv++>/src.
+For example, an arbitrary-precision numerical class, Large_Real, would
+have MV++ classes MV_Vector_Large_Real, MV_ColMat_Large_Real, and so on.
+
+
+
+o) what is the file "empty" in <mv++>/lib?
+
+A dummy file; it was put there so our version of shar would
+include the <mv++>/lib directory.  Otherwise, make reports an error
+when trying to build mvlib.a , because the destination directory does not
+exist.
+
+

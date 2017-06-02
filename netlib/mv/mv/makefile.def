@@ -1,0 +1,89 @@
+#***************************************************************************
+#
+#                    M V ++     M A K E F I L E . D E F
+#
+#    Compiler Specific Section:   Edit to reflect your environment
+#---------------------------------------------------------------------------
+#
+#	Macro                 Significance
+#
+#   CCC                   C++ compiler
+#   CCCFLAGS              flags to C++ compiler
+#   CC                    C compiler
+#   CFLAGS                flags to C compiler
+#   LDFLAGS				  libraries 
+#   HASRANLIB             't' if your system has ranlib, 'f' otherwise
+#
+#
+# Some defaults are below for Sun C++, and GNU g++.  Uncomment the 
+# relevant sections.
+#
+#
+
+
+# Sun C++ 3.0.1 
+#
+CCC 			= CC
+CC 				= acc	
+CFLAGS 			= -O
+CCCFLAGS		= -O
+LDFLAGS			=  ../lib/mvlib.a -lm -lcomplex
+
+# IBM xlC  v. 1.1
+#
+CCC 			= xlC
+CC 				= xlc
+CFLAGS 			= -O
+CCCFLAGS		= -+ -O
+LDFLAGS			= ../lib/mvlib.a -lm -lcomplex
+
+# g++ v. 2.6.0
+#
+CCC 			= g++
+CC 				= gcc	
+CFLAGS 			= -O
+CCCFLAGS		= -O  
+LDFLAGS			=    ../lib/mvlib.a -lm
+
+
+# ranlib available on this system? 't' or 'f'
+HASRANLIB = t
+
+
+
+################################################################
+#                                                              #
+#           Implicit rules: do not modfiy after here           #
+#                                                              #
+################################################################
+
+
+MV_DIR 				= ..
+MV_LIB_DIR			= $(MV_DIR)/lib
+MV_INCLUDE_DIR		= $(MV_DIR)/include
+
+EXENAME     = -o
+OBJ_EXT     = o
+LIB_EXT     = a
+EXE_EXT     =
+
+.SUFFIXES: .c .cc .$(OBJ_EXT) $(EXE_EXT)
+
+OBJS            = $(SRCS:.cc=.$(OBJ_EXT))
+
+EXECS           = $(SRCS:.cc=$(EXE_EXT))
+
+.$(OBJ_EXT)$(EXE_EXT):
+	$(CCC) $(EXENAME)  $@$(EXE_EXT) $@.$(OBJ_EXT) \
+	$(LIBS)$(LDFLAGS)
+        
+.cc.$(OBJ_EXT):
+	$(CCC) $(CCCFLAGS)  $(INCLUDES) -c $<
+
+.c.$(OBJ_EXT):
+	$(CC) $(CFLAGS) $(INCLUDES) -c $<
+
+.f.$(OBJ_EXT):
+	$(F77)  -c $<
+
+

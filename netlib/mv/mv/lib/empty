@@ -1,0 +1,5 @@
+This is a dummy file; it was put there so our version of shar would
+include the <mv++>/lib directory.  Otherwise, make reports an error
+when trying to build mvlib.a , because the destination directory does not
+exist.
+
