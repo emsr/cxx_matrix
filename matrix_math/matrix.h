@@ -124,10 +124,7 @@ template<typename Tp>
 }  //  namespace matrix
 
 #include "matrix_lu_decomp.tcc"
-
 #include "matrix_qr_decomp.tcc"
-
 #include "matrix_sv_decomp.tcc"
-
 #include "matrix_cholesky_decomp.tcc"
-
+#include "matrix_gauss_jordan.tcc"

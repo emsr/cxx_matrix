@@ -1,9 +1,7 @@
-#ifndef LU_DECOMP_TCC
-#define LU_DECOMP_TCC 1
-
+#ifndef MATRIX_LU_DECOMP_TCC
+#define MATRIX_LU_DECOMP_TCC 1
 
 #include <cstdlib>
-#include <iostream>
 #include <vector>
 #include <cmath>
 #include <limits>
@@ -34,18 +32,18 @@ template<typename NumTp, typename SquareMatrix>
     template<typename InVecIter, typename OutVecIter>
       void
       backsubstitution(InVecIter b_begin, InVecIter b_end,
-                       OutVecIter x_begin) const;
+		       OutVecIter x_begin) const;
 
     template<typename SquareMatrix2, typename Vector, typename VectorOut>
       void
       improve(const SquareMatrix2 & a_orig,
-              const Vector & b, VectorOut & x) const;
+	      const Vector & b, VectorOut & x) const;
 
     template<typename SquareMatrix2, typename InVecIter, typename OutVecIter>
       void
       improve(const SquareMatrix2 & a_orig,
-              InVecIter b_begin, InVecIter b_end,
-              OutVecIter x_begin) const;
+	      InVecIter b_begin, InVecIter b_end,
+	      OutVecIter x_begin) const;
 
     template<typename SquareMatrix2>
       void
@@ -75,88 +73,88 @@ template<typename NumTp, typename SquareMatrix>
  */
 template<typename NumTp, typename SquareMatrix, typename Vector>
   bool
-  lu_decomp(const std::size_t n, SquareMatrix & a,
-            Vector & index, NumTp & parity)
+  lu_decomp(std::size_t n, SquareMatrix& a,
+	    Vector& index, NumTp& parity)
   {
     const NumTp TINY = NumTp(1.0e-20L);
 
     std::vector<NumTp> scale(n);
 
-    parity = NumTp(1);
+    parity = NumTp{1};
 
     //  Loop over rows to get the implicit scaling information.    
     for (std::size_t i = 0; i < n; ++i)
       {
-        promote_t<NumTp> big(0), temp;
-        for (std::size_t j = 0; j < n; ++j)
-          {
-            temp = std::abs(a[i][j]);
-            if (temp > big)
-              big = temp;
-          }
-        if (big == NumTp(0))
-          {
-            throw std::logic_error("lu_decomp: singular matrix");
-            return false;
-          }
+	NumTp big{0};
+	for (std::size_t j = 0; j < n; ++j)
+	  {
+	    const auto temp = std::abs(a[i][j]);
+	    if (temp > big)
+	      big = temp;
+	  }
+	if (big == NumTp{0})
+	  {
+	    throw std::logic_error("lu_decomp: singular matrix");
+	    return false;
+	  }
 
-        //  Save the scaling for the row.
-        scale[i] = NumTp(1) / big;
+	//  Save the scaling for the row.
+	scale[i] = NumTp{1} / big;
       }
 
     //  This is the loop over columns of Crout's method.
     for (std::size_t j = 0; j < n; ++j)
       {
-        for (std::size_t i = 0; i < j; ++i)
-          {
-            NumTp sum = a[i][j];
-            for (std::size_t k = 0; k < i; ++k)
-              sum -= a[i][k] * a[k][j];
-            a[i][j] = sum;
-          }
+	// Lower triangle.
+	for (std::size_t i = 0; i < j; ++i)
+	  {
+	    auto sum = a[i][j];
+	    for (std::size_t k = 0; k < i; ++k)
+	      sum -= a[i][k] * a[k][j];
+	    a[i][j] = sum;
+	  }
 
-        //  Initialize for the search for the largest pivot point.
-        auto imax = std::numeric_limits<std::size_t>::max();
-        NumTp big = NumTp(0);
-        for (std::size_t i = j; i < n; ++i)
-          {
-            auto sum = a[i][j];
-            for (std::size_t k = 0; k < j; ++k)
-              sum -= a[i][k] * a[k][j];
-            a[i][j] = sum;
-            NumTp dummy = scale[i] * std::abs(sum);
-            if (dummy >= big)
-              {
-                big = dummy;
-                imax = i;
-              }
-          }
+	//  Initialize for the search for the largest pivot point.
+	auto imax = std::numeric_limits<std::size_t>::max();
+	auto big = NumTp{0};
+	for (std::size_t i = j; i < n; ++i)
+	  {
+	    auto sum = a[i][j];
+	    for (std::size_t k = 0; k < j; ++k)
+	      sum -= a[i][k] * a[k][j];
+	    a[i][j] = sum;
+	    if (const auto dum = scale[i] * std::abs(sum); dum >= big)
+	      {
+		big = dum;
+		imax = i;
+	      }
+	  }
 
-        //  Interchange rows if required.
-        if (j != imax)
-          {
-            for (std::size_t k = 0; k < n; ++k)
-              std::swap(a[imax][k], a[j][k]);
+	//  Interchange rows if required.
+	if (j != imax)
+	  {
+	    for (std::size_t k = 0; k < n; ++k)
+	      std::swap(a[imax][k], a[j][k]);
 
-            //  Change parity.
-            parity = -parity;
+	    //  Change parity.
+	    parity = -parity;
 
-            //  Interchange the scale factor.
-            std::swap(scale[imax], scale[j]);
-          }
-        index[j] = imax;
-        if (a[j][j] == NumTp(0))
-          a[j][j] = TINY;
+	    //  Interchange the scale factor.
+	    std::swap(scale[imax], scale[j]);
+	  }
+	index[j] = imax;
+	if (a[j][j] == NumTp(0))
+	  a[j][j] = TINY;
 
-        //
-        //     Now finally divide by the pivot element
-        //
-        if (j != n - 1)
-          {
-            auto scale = NumTp(1) / std::abs(a[j][j]);  //  Changed this to 1/abs(a) from simple 1/a.
-            for (std::size_t i = j + 1; i < n; ++i)
-              a[i][j] *= scale;
-          }
+	//
+	//     Now finally divide by the pivot element
+	//
+	if (j != n - 1)
+	  {
+	    const auto scale = NumTp(1) / a[j][j];
+	    for (std::size_t i = j; i < n; ++i)
+	      a[i][j] *= scale;
+	  }
     }  //  Go back for the next column in the reduction.
 
     return true;
@@ -173,9 +171,9 @@ template<typename NumTp, typename SquareMatrix, typename Vector>
 template<typename SquareMatrix, typename VectorInt, typename Vector>
   void
   lu_backsub(const std::size_t n,
-             const SquareMatrix & a,
-             const VectorInt & index,
-             Vector & b)
+	     const SquareMatrix & a,
+	     const VectorInt & index,
+	     Vector & b)
   {
     using NumTp = std::remove_reference_t<decltype(a[0][0])>;
 
@@ -185,24 +183,24 @@ template<typename SquareMatrix, typename VectorInt, typename Vector>
     int i_start = -1;
     for (std::size_t i = 0; i < n; ++i)
       {
-        auto i_perm = index[i];
-        auto sum = b[i_perm];
-        b[i_perm] = b[i];
-        if (i_start > -1)
-          for (std::size_t j = i_start; j <= i - 1; ++j)
-            sum -= a[i][j] * b[j];
-        else if (sum != NumTp(0))
-          i_start = i;
-        b[i] = sum;
+	auto i_perm = index[i];
+	auto sum = b[i_perm];
+	b[i_perm] = b[i];
+	if (i_start > -1)
+	  for (std::size_t j = i_start; j <= i - 1; ++j)
+	    sum -= a[i][j] * b[j];
+	else if (sum != NumTp(0))
+	  i_start = i;
+	b[i] = sum;
       }
 
     //  Now do the backsubstitution.
     for (std::ptrdiff_t i = n - 1; i >= 0; --i)
       {
-        auto sum = b[i];
-        for (std::size_t j = i + 1; j < n; ++j)
-          sum -= a[i][j] * b[j];
-        b[i] = sum / a[i][i];
+	auto sum = b[i];
+	for (std::size_t j = i + 1; j < n; ++j)
+	  sum -= a[i][j] * b[j];
+	b[i] = sum / a[i][i];
       }
 
     return;
@@ -218,8 +216,8 @@ template<typename SquareMatrix, typename VectorInt, typename Vector>
 template<typename SquareMatrix, typename VectorInt, typename Vector>
   void
   lu_improve(const std::size_t n, const SquareMatrix & a,
-             const SquareMatrix & a_lu,
-             const VectorInt & index, const Vector & b, Vector & x)
+	     const SquareMatrix & a_lu,
+	     const VectorInt & index, const Vector & b, Vector & x)
   {
     using NumTp = std::remove_reference_t<decltype(a[0][0])>;
 
@@ -227,9 +225,9 @@ template<typename SquareMatrix, typename VectorInt, typename Vector>
 
     for (std::size_t i = 0; i < n; ++i)
       {
-        r[i] = -b[i];
-        for (std::size_t j = 0; j < n; ++j)
-          r[i] += a[i][j] * x[j];
+	r[i] = -b[i];
+	for (std::size_t j = 0; j < n; ++j)
+	  r[i] += a[i][j] * x[j];
       }
 
     lu_backsub(a_lu, n, index, r);
@@ -249,19 +247,19 @@ template<typename SquareMatrix, typename VectorInt, typename Vector>
 template<typename SquareMatrix, typename VectorInt>
   void
   lu_invert(const std::size_t n, const SquareMatrix & a_lu,
-            const VectorInt & index, SquareMatrix & a_inv)
+	    const VectorInt & index, SquareMatrix & a_inv)
   {
     using NumTp = std::remove_reference_t<decltype(a_inv[0][0])>;
 
     for (std::size_t j = 0; j < n; ++j)
       {
-        std::vector<NumTp> col(n);
-        col[j] = NumTp(1);
+	std::vector<NumTp> col(n);
+	col[j] = NumTp(1);
 
-        lu_backsub(n, a_lu, index, col);
+	lu_backsub(n, a_lu, index, col);
 
-        for (std::size_t i = 0; i < n; ++i)
-          a_inv[i][j] = col[i];
+	for (std::size_t i = 0; i < n; ++i)
+	  a_inv[i][j] = col[i];
       }
 
     return;
@@ -297,14 +295,14 @@ template<typename SquareMatrix>
 
     for (std::size_t i = 0; i < n; ++i)
       {
-        trace += a_lu[i][i];
-        for (std::ptrdiff_t j = i - 1; j >= 0; --j)
-          trace += a_lu[i][j] * a_lu[j][i];
+	trace += a_lu[i][i];
+	for (std::ptrdiff_t j = i - 1; j >= 0; --j)
+	  trace += a_lu[i][j] * a_lu[j][i];
       }
 
     return trace;
   }
 
-}  //  namespace matrix
+} // namespace matrix
 
-#endif  //  LU_DECOMP_TCC
+#endif // MATRIX_LU_DECOMP_TCC
