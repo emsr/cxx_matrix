@@ -111,10 +111,10 @@ template<typename HermitianMatrix, typename Vector>
 
     for (std::size_t i = 0; i < n; ++i)
       {
-	a[i][i] = NumTp(1) / d[i];
+	a[i][i] = NumTp{1} / d[i];
 	for (std::size_t j = i + 1; j < n; ++j)
 	  {
-	    auto sum = NumTp(0);
+	    auto sum = NumTp{0};
 	    for (std::size_t k = i; k < j; ++k)
 	      sum -= a[j][k] * a[k][i];
 	    a[j][i] = sum / d[j];

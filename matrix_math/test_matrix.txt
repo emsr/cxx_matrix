@@ -139,3 +139,29 @@
 
  Output vector of Cholesky decompostion:
     2.58812    4.92241    6.00694
+
+ Input matrix for QR decomposition:
+    1.33967    2.24018    3.70872
+    2.20547    4.99127    3.09347
+     7.6532    6.59218    9.10238
+
+ Output matrix of QR decompostion:
+    1.23036   -7.98121   -10.0852
+   0.288177    2.19844   -1.04767
+          1  -0.660504    -1.8354
+
+ Output vector of QR decompostion:
+    1.29842    2.63471          0
+
+ Output vector of QR decompostion:
+   -8.07653    -3.1126    -1.8354
+
+ Inverse of input matrix:
+  -0.542689 -0.0879397   0.251003
+  -0.078021   0.350875 -0.0874566
+   0.512793  -0.180174 -0.0378412
+
+ Verify A^{-1}.A = I
+          1 8.88178e-16 -4.44089e-16
+          0          1 -2.22045e-16
+ -9.4369e-16 -1.38778e-16          1

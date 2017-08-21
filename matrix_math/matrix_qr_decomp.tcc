@@ -83,33 +83,33 @@ template<typename Matrix, typename Vector>
     for (std::size_t k = 0; k < n_cols - 1; ++k)
       {
 	//  See if the matrix is singular in this column.
-	NumTp scale = NumTp(0);
+	NumTp scale = NumTp{0};
 	for (std::size_t i = k; i < n_rows; ++i)
 	  if (scale < std::abs(a[i][k]))
 	    scale = std::abs(a[i][k]);
 
-	if (scale == NumTp(0))
+	if (scale == NumTp{0})
 	  {
 	    singular = true;
-	    c[k] = d[k] = NumTp(0);
+	    c[k] = d[k] = NumTp{0};
 	  }
 	else
 	  {
-	    sum = NumTp(0);
+	    sum = NumTp{0};
 	    for (std::size_t i = k; i < n_rows; ++i)
 	      {
 		a[i][k] /= scale;
 		sum += a[i][k] * a[i][k];
 	      }
 	    sigma = std::sqrt(sum);
-	    if (a[k][k] < NumTp(0))
+	    if (a[k][k] < NumTp{0})
 	      sigma = -sigma;
 	    a[k][k] += sigma;
 	    c[k] = sigma * a[k][k];
 	    d[k] = -scale * sigma;
 	    for (std::size_t j = k + 1; j < n_cols; ++j)
 	      {
-		sum = NumTp(0);
+		sum = NumTp{0};
 		for (std::size_t i = k; i < n_rows; ++i)
 		  sum += a[i][k] * a[i][j];
 		tau = sum/c[k];
@@ -118,11 +118,37 @@ template<typename Matrix, typename Vector>
 	      }
 	  }
       }
-    c[n_cols - 1] = NumTp(0);
+    c[n_cols - 1] = NumTp{0};
     d[n_cols - 1] = a[n_cols - 1][n_cols - 1];
 
-    if (d[n_cols - 1] == NumTp(0))
+    if (d[n_cols - 1] == NumTp{0})
       singular = true;
+
+    return;
+  }
+
+
+/**
+ * This routine solves the set of equations Rx = b where R is the upper triangular
+ * matrix stored in a[0..n_rows - 1][0..n_cols - 1] and d[0..n_cols - 1].
+ * Here n_rows >= n_cols.
+ */
+template<typename Matrix, typename Vector, typename VectorB>
+  void
+  r_backsub(std::size_t n_rows, std::size_t n_cols,
+	    const Matrix & a, const Vector & d,
+	    VectorB & b)
+  {
+    using NumTp = std::decay_t<decltype(a[0][0])>;
+
+    b[n_cols - 1] /= d[n_cols - 1];
+    for (int i = n_cols - 2; i >= 0; --i)
+      {
+	NumTp sum = NumTp{0};
+	for (std::size_t j = i + 1; j < n_rows; ++j)
+	  sum += a[i][j] * b[j];
+	b[i] = (b[i] - sum) / d[i];
+      }
 
     return;
   }
@@ -135,19 +161,18 @@ template<typename Matrix, typename Vector>
  * The vector b[0..n_rows - 1] is input as the "RHS" and output and the solution.
  * Here n_rows >= n_cols.
  */
-template<typename Matrix, typename Vector>
+template<typename Matrix, typename Vector, typename VectorB>
   void
   qr_backsub(const std::size_t n_rows, const std::size_t n_cols,
-	     const Matrix & a,
-	     const Vector & c, const Vector & d,
-	     Vector & b)
+	     const Matrix & a, const Vector & c, const Vector & d,
+	     VectorB & b)
   {
-    using NumTp = std::remove_reference_t<decltype(a[0][0])>;
+    using NumTp = std::decay_t<decltype(a[0][0])>;
 
     //  Form Qt.b.
     for (std::size_t j = 0; j < n_cols - 1; ++j)
       {
-	NumTp sum = NumTp(0);
+	NumTp sum = NumTp{0};
 	for (std::size_t i = j; i < n_rows; ++i)
 	  sum += a[i][j] * b[i];
 	NumTp tau = sum/c[j];
@@ -163,33 +188,6 @@ template<typename Matrix, typename Vector>
 
 
 /**
- * This routine solves the set of equations Rx = b where R is the upper triangular
- * matrix stored in a[0..n_rows - 1][0..n_cols - 1] and d[0..n_cols - 1].
- * Here n_rows >= n_cols.
- */
-template<typename Matrix, typename Vector>
-  void
-  r_backsub(std::size_t n_rows, std::size_t n_cols,
-	    const Matrix & a,
-	    const Vector & d,
-	    Vector & b)
-  {
-    using NumTp = std::remove_reference_t<decltype(a[0][0])>;
-
-    b[n_cols - 1] /= d[n_cols - 1];
-    for (int i = n_cols - 2; i >= 0; --i)
-      {
-	NumTp sum = NumTp(0);
-	for (std::size_t j = i + 1; j < n_rows; ++j)
-	  sum += a[i][j] * b[j];
-	b[i] = (b[i] - sum) / d[i];
-      }
-
-    return;
-  }
-
-
-/**
  * Inverts a matrix given the QR decomposed matrix.
  * The inverse matrix is allocated in this routine so make sure the pointer is freed first.
  *
@@ -198,19 +196,18 @@ template<typename Matrix, typename Vector>
 template<typename Matrix, typename Vector>
   void
   qr_invert(std::size_t n_rows, std::size_t n_cols,
-	    const Matrix & a_qr,
-	    const Vector & c, const Vector & d,
+	    const Matrix & a_qr, const Vector & c, const Vector & d,
 	    Matrix & a_inv)
   {
-    using NumTp = decltype(a_qr[0][0]);
+    using NumTp = std::decay_t<decltype(a_qr[0][0])>;
 
     std::vector<NumTp> col(n_rows);
 
     for (std::size_t j = 0; j < n_rows; ++j)
       {
 	for (std::size_t i = 0; i < n_rows; ++i)
-	  col[i] = NumTp(0);
-	col[j] = NumTp(1);
+	  col[i] = NumTp{0};
+	col[j] = NumTp{1};
 
 	qr_backsub(n_rows, n_cols, a_qr, c, d, col);
 
@@ -237,7 +234,7 @@ template<typename Matrix, typename Vector>
     //  Find largest k such that uk != 0.
     std::ptrdiff_t k;
     for (std::ptrdiff_t k = n_cols - 1; k >= 0; --k)
-      if (u[k] != NumTp(0))
+      if (u[k] != NumTp{0})
 	break;
 
     // Transform R + u x v to upper triangular.
@@ -247,9 +244,9 @@ template<typename Matrix, typename Vector>
 	if (u[i] == 0)
 	  u[i] = std::abs(u[i + 1]);
 	else if (std::abs(u[i]) > std::abs(u[i + 1]))
-	  u[i] = std::abs(u[i]) * std::sqrt(NumTp(1) + (u[i + 1] / u[i]) * (u[i + 1] / u[i]));
+	  u[i] = std::abs(u[i]) * std::sqrt(NumTp{1} + (u[i + 1] / u[i]) * (u[i + 1] / u[i]));
 	else
-	  u[i] = std::abs(u[i + 1]) * std::sqrt(NumTp(1) + (u[i] / u[i+1]) * (u[i] / u[i + 1]));
+	  u[i] = std::abs(u[i + 1]) * std::sqrt(NumTp{1} + (u[i] / u[i+1]) * (u[i] / u[i + 1]));
       }
     for (std::size_t j = 0; j < n_cols; ++j)
       r[0][j] += u[0] * v[j];
@@ -276,13 +273,13 @@ template<typename NumTp, typename Matrix, typename Vector>
 		NumTp a, NumTp b)
   {
     NumTp c, s;
-    if (a == NumTp(0))
+    if (a == NumTp{0})
       {
 	// Avoid underflow or overflow.
-	c = NumTp(0);
-	s = NumTp(1);
-	if (b < NumTp(0))
-	  s = -NumTp(1);
+	c = NumTp{0};
+	s = NumTp{1};
+	if (b < NumTp{0})
+	  s = -NumTp{1};
       }
     else
       {

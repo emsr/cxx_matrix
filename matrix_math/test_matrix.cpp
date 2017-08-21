@@ -48,13 +48,7 @@ main()
   matrix::print_matrix(A_sing_inv);
 
   double I_sing[M][N];
-  for (int i = 0; i < 3; ++i)
-    for (int j = 0; j < 3; ++j)
-      {
-        I_sing[i][j] = 0.0;
-        for (int k  = 0; k < 3; ++k)
-          I_sing[i][j] += A_sing[i][k] * A_sing_inv[k][j];
-      }
+  matrix::mul_matrix(I_sing, A_sing, A_sing_inv);
 
   std::cout << "\n A.A^{-1}\n";
   matrix::print_matrix(I_sing);
@@ -217,6 +211,38 @@ main()
 
   std::cout << "\n Output vector of Cholesky decompostion:\n";
   matrix::print_matrix(D_C);
+
+  // QR Decomposition
+
+  double A_QR[3][3];
+  matrix::copy_matrix(A_QR, A_in);
+  std::cout << "\n Input matrix for QR decomposition:\n";
+  matrix::print_matrix(A_QR);
+
+  double C_QR[3], D_QR[3];
+  bool sing_QR;
+  matrix::qr_decomp(3, 3, A_QR, C_QR, D_QR, sing_QR);
+
+  std::cout << "\n Output matrix of QR decompostion:\n";
+  matrix::print_matrix(A_QR);
+
+  std::cout << "\n Output vector of QR decompostion:\n";
+  matrix::print_matrix(C_QR);
+
+  std::cout << "\n Output vector of QR decompostion:\n";
+  matrix::print_matrix(D_QR);
+
+  decltype(A_QR) A_QR_inv;
+  matrix::qr_invert(3, 3, A_QR, C_QR, D_QR, A_QR_inv);
+
+  std::cout << "\n Inverse of input matrix:\n";
+  matrix::print_matrix(A_LU_inv);
+
+  decltype(A_QR) I_QR;
+  matrix::mul_matrix(I_QR, A_QR_inv, A_in);
+
+  std::cout << "\n Verify A^{-1}.A = I\n";
+  matrix::print_matrix(I_QR);
 
   return 0;
 }

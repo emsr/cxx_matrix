@@ -74,7 +74,7 @@ template<typename NumTp, typename SquareMatrix>
  * d is output as the parity of the row permutation
  */
 template<typename NumTp, typename SquareMatrix, typename Vector>
-  bool
+  void
   lu_decomp(std::size_t n, SquareMatrix& a,
 	    Vector& index, NumTp& parity)
   {
@@ -91,10 +91,7 @@ template<typename NumTp, typename SquareMatrix, typename Vector>
 	  if (const auto temp = std::abs(a[i][j]); temp > big)
 	    big = temp;
 	if (big == NumTp{0})
-	  {
-	    std::__throw_logic_error("lu_decomp: singular matrix");
-	    return false;
-	  }
+	  std::__throw_logic_error("lu_decomp: singular matrix");
 
 	// Save the scaling for the row.
 	scale[i] = NumTp{1} / big;
@@ -138,22 +135,19 @@ template<typename NumTp, typename SquareMatrix, typename Vector>
 
 	    // Interchange the scale factor.
 	    std::swap(scale[imax], scale[j]);
-	    //scale[imax] = scale[j]; // Just assign?
 	  }
 	index[j] = imax;
-	if (a[j][j] == NumTp(0))
+	if (a[j][j] == NumTp{0})
 	  a[j][j] = TINY;
 
 	// Now finally divide by the pivot element
 	if (j != n - 1)
 	  {
-	    const auto scale = NumTp(1) / a[j][j];
+	    const auto scale = NumTp{1} / a[j][j];
 	    for (std::size_t i = j + 1; i < n; ++i)
 	      a[i][j] *= scale;
 	  }
       } // Go back for the next column in the reduction.
-
-    return true;
   }
 
 
@@ -185,7 +179,7 @@ template<typename SquareMatrix, typename VectorInt, typename Vector>
 	if (i_start > -1)
 	  for (std::size_t j = i_start; j <= i - 1; ++j)
 	    sum -= a[i][j] * b[j];
-	else if (sum != NumTp(0))
+	else if (sum != NumTp{0})
 	  i_start = i;
 	b[i] = sum;
       }
@@ -250,7 +244,7 @@ template<typename SquareMatrix, typename VectorInt>
     for (std::size_t j = 0; j < n; ++j)
       {
 	std::vector<NumTp> col(n);
-	col[j] = NumTp(1);
+	col[j] = NumTp{1};
 
 	lu_backsub(n, a_lu, index, col);
 
@@ -287,7 +281,7 @@ template<typename SquareMatrix>
   {
     using NumTp = std::remove_reference_t<decltype(a_lu[0][0])>;
 
-    auto trace = NumTp(0);
+    auto trace = NumTp{0};
 
     for (std::size_t i = 0; i < n; ++i)
       {
