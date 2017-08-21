@@ -98,8 +98,6 @@ template<typename NumTp, typename SquareMatrix, typename Vector>
 
 	// Save the scaling for the row.
 	scale[i] = NumTp{1} / big;
-std::cout << "big=" << big << '\n';
-std::cout << "scale[i]=" << scale[i] << '\n';
       }
 
     // This is the loop over columns of Crout's method.
@@ -112,7 +110,6 @@ std::cout << "scale[i]=" << scale[i] << '\n';
 	    for (std::size_t k = 0; k < i; ++k)
 	      sum -= a[i][k] * a[k][j];
 	    a[i][j] = sum;
-std::cout << "a[i][j]=" << a[i][j] << '\n';
 	  }
 
 	// Initialize for the search for the largest pivot point.
@@ -124,15 +121,12 @@ std::cout << "a[i][j]=" << a[i][j] << '\n';
 	    for (std::size_t k = 0; k < j; ++k)
 	      sum -= a[i][k] * a[k][j];
 	    a[i][j] = sum;
-std::cout << "a[i][j]=" << a[i][j] << '\n';
 	    if (const auto dum = scale[i] * std::abs(sum); dum >= big)
 	      {
 		big = dum;
 		imax = i;
 	      }
 	  }
-std::cout << "big=" << big << '\n';
-std::cout << "imax=" << imax << '\n';
 	// Interchange rows if required.
 	if (j != imax)
 	  {
@@ -147,7 +141,6 @@ std::cout << "imax=" << imax << '\n';
 	    //scale[imax] = scale[j]; // Just assign?
 	  }
 	index[j] = imax;
-std::cout << "index[j]=" << index[j] << '\n';
 	if (a[j][j] == NumTp(0))
 	  a[j][j] = TINY;
 
@@ -156,10 +149,7 @@ std::cout << "index[j]=" << index[j] << '\n';
 	  {
 	    const auto scale = NumTp(1) / a[j][j];
 	    for (std::size_t i = j + 1; i < n; ++i)
-{
 	      a[i][j] *= scale;
-std::cout << "a[i][j]=" << a[i][j] << '\n';
-}
 	  }
       } // Go back for the next column in the reduction.
 

@@ -51,7 +51,6 @@ template<typename NumTp, typename SquareMatrix, typename Matrix>
 		}
 	  }
 	++index_pivot[icol];
-std::cout << "index_pivot[icol]=" << index_pivot[icol] << '\n';
 
 	// With the pivot elements in hand, we swap rows to put
 	// the pivot elements on the diagonal.
@@ -70,8 +69,6 @@ std::cout << "index_pivot[icol]=" << index_pivot[icol] << '\n';
 	  }
 	index_row[i] = irow;
 	index_col[i] = icol;
-std::cout << "index_row[i]=" << index_row[i] << '\n';
-std::cout << "index_col[i]=" << index_col[i] << '\n';
 	if (a[icol][icol] == NumTp{})
 	  std::__throw_runtime_error("gauss_jordan: Singular matrix");
 	const auto pivinv = NumTp{1} / a[icol][icol];
