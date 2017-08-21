@@ -128,3 +128,5 @@ template<typename Tp>
 #include "matrix_sv_decomp.tcc"
 #include "matrix_cholesky_decomp.tcc"
 #include "matrix_gauss_jordan.tcc"
+#include "matrix_tridiag.tcc"
+#include "matrix_vandermonde.tcc"

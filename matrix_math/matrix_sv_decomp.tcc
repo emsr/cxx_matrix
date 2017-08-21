@@ -100,7 +100,7 @@ template<typename Matrix, typename Vector>
 		    s += a[k][i] * a[k][i];
 		  }
 		f = a[i][i];
-		g = -copysign(std::sqrt(s),f);
+		g = -std::copysign(std::sqrt(s),f);
 		h = f * g - s;
 		a[i][i] = f - g;
 		for (std::size_t j = l; j < n_cols; ++j)
@@ -264,7 +264,7 @@ template<typename Matrix, typename Vector>
 	      {
 		std::ostringstream msg;
 		msg << "No convergence in " << ITS << " sv_decomp iterations.";
-		throw std::logic_error(msg);
+		std::__throw_logic_error(msg.str().c_str());
 	      }
 
 	    //  Shift from bottom 2x2 minor.

@@ -42,8 +42,11 @@ namespace matrix
     {
       for (int i = 0; i < M; ++i)
 	for (int j = 0; j < N; ++j)
-	  for (int k = 0; k < K; ++k)
-	    c[i][j] = a[i][k] * b[k][j];
+	  {
+	    c[i][j] = Numeric{0};
+	    for (int k = 0; k < K; ++k)
+	      c[i][j] += a[i][k] * b[k][j];
+	  }
     }
 
   template<typename Numeric, std::size_t M, std::size_t K>
@@ -51,8 +54,11 @@ namespace matrix
     mul_matrix(Numeric (&c)[M], const Numeric (&a)[M][K], const Numeric (&b)[K])
     {
       for (int i = 0; i < M; ++i)
-	for (int k = 0; k < K; ++k)
-	  c[i] = a[i][k] * b[k];
+	{
+	  c[i] = Numeric{0};
+	  for (int k = 0; k < K; ++k)
+	    c[i] += a[i][k] * b[k];
+	}
     }
 
   template<typename Numeric, std::size_t M, std::size_t N>
@@ -73,6 +79,7 @@ namespace matrix
     {
       for (auto & row : mat)
 	std::cout << ' ' << std::setw(10) << row;
+      std::cout << '\n';
     }
 
 }

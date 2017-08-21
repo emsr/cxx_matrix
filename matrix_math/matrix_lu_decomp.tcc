@@ -13,7 +13,7 @@ namespace matrix
 
 
 /**
- *  This class represents an lower-upper decomposition of a square matrix.
+ * This class represents an lower-upper decomposition of a square matrix.
  */
 template<typename NumTp, typename SquareMatrix>
   class lu_decomposition
@@ -66,10 +66,12 @@ template<typename NumTp, typename SquareMatrix>
 
 
 /**
- *  Given an n*n matrix a[0..n-1][0..n-1], this routine replaces it by the LU (Lower-triangular Upper-triangular) 
- *  decomposition of a rowwise permutation of itself.  n and a[][] are input.  a[][] is output, index[] is an 
- *  output vector which row permutation effected by the partial pivoting; d is output as the parity of the row 
- *  permutation
+ * Given an n*n matrix a[0..n-1][0..n-1], this routine replaces it
+ * by the LU (Lower-triangular Upper-triangular)  decomposition
+ * of a rowwise permutation of itself.
+ * The matrix size n and a[][] are input.  a[][] is output, index[]
+ * is an output vector which row permutation effected by the partial pivoting;
+ * d is output as the parity of the row permutation
  */
 template<typename NumTp, typename SquareMatrix, typename Vector>
   bool
@@ -79,30 +81,28 @@ template<typename NumTp, typename SquareMatrix, typename Vector>
     const NumTp TINY = NumTp(1.0e-20L);
 
     std::vector<NumTp> scale(n);
-
     parity = NumTp{1};
 
-    //  Loop over rows to get the implicit scaling information.    
+    // Loop over rows to get the implicit scaling information.    
     for (std::size_t i = 0; i < n; ++i)
       {
 	NumTp big{0};
 	for (std::size_t j = 0; j < n; ++j)
-	  {
-	    const auto temp = std::abs(a[i][j]);
-	    if (temp > big)
-	      big = temp;
-	  }
+	  if (const auto temp = std::abs(a[i][j]); temp > big)
+	    big = temp;
 	if (big == NumTp{0})
 	  {
-	    throw std::logic_error("lu_decomp: singular matrix");
+	    std::__throw_logic_error("lu_decomp: singular matrix");
 	    return false;
 	  }
 
-	//  Save the scaling for the row.
+	// Save the scaling for the row.
 	scale[i] = NumTp{1} / big;
+std::cout << "big=" << big << '\n';
+std::cout << "scale[i]=" << scale[i] << '\n';
       }
 
-    //  This is the loop over columns of Crout's method.
+    // This is the loop over columns of Crout's method.
     for (std::size_t j = 0; j < n; ++j)
       {
 	// Lower triangle.
@@ -112,9 +112,10 @@ template<typename NumTp, typename SquareMatrix, typename Vector>
 	    for (std::size_t k = 0; k < i; ++k)
 	      sum -= a[i][k] * a[k][j];
 	    a[i][j] = sum;
+std::cout << "a[i][j]=" << a[i][j] << '\n';
 	  }
 
-	//  Initialize for the search for the largest pivot point.
+	// Initialize for the search for the largest pivot point.
 	auto imax = std::numeric_limits<std::size_t>::max();
 	auto big = NumTp{0};
 	for (std::size_t i = j; i < n; ++i)
@@ -123,50 +124,55 @@ template<typename NumTp, typename SquareMatrix, typename Vector>
 	    for (std::size_t k = 0; k < j; ++k)
 	      sum -= a[i][k] * a[k][j];
 	    a[i][j] = sum;
+std::cout << "a[i][j]=" << a[i][j] << '\n';
 	    if (const auto dum = scale[i] * std::abs(sum); dum >= big)
 	      {
 		big = dum;
 		imax = i;
 	      }
 	  }
-
-	//  Interchange rows if required.
+std::cout << "big=" << big << '\n';
+std::cout << "imax=" << imax << '\n';
+	// Interchange rows if required.
 	if (j != imax)
 	  {
 	    for (std::size_t k = 0; k < n; ++k)
 	      std::swap(a[imax][k], a[j][k]);
 
-	    //  Change parity.
+	    // Change parity.
 	    parity = -parity;
 
-	    //  Interchange the scale factor.
+	    // Interchange the scale factor.
 	    std::swap(scale[imax], scale[j]);
+	    //scale[imax] = scale[j]; // Just assign?
 	  }
 	index[j] = imax;
+std::cout << "index[j]=" << index[j] << '\n';
 	if (a[j][j] == NumTp(0))
 	  a[j][j] = TINY;
 
-	//
-	//     Now finally divide by the pivot element
-	//
+	// Now finally divide by the pivot element
 	if (j != n - 1)
 	  {
 	    const auto scale = NumTp(1) / a[j][j];
-	    for (std::size_t i = j; i < n; ++i)
+	    for (std::size_t i = j + 1; i < n; ++i)
+{
 	      a[i][j] *= scale;
+std::cout << "a[i][j]=" << a[i][j] << '\n';
+}
 	  }
-    }  //  Go back for the next column in the reduction.
+      } // Go back for the next column in the reduction.
 
     return true;
   }
 
 
 /**
- *  Solve the set of n linear equations a.x = b.  Here a[0..n-1][0..n-1] is input, not as the original matrix a but as 
- *  its LU decomposition, determined by the routine lu_decomp().  b[0..n-1] is input as the right hand side vector b 
- *  and returns with the left-hand solution vector x.  a, n, and index are not modified by this routine and can be left 
- *  in place for successive calls with different right hand sides b[0..n-1].  This routine takes into account the 
- *  possibility that b will begin with a lot of zeros so that it is efficient for use in matrix inversion.
+ * Solve the set of n linear equations a.x = b.  Here a[0..n-1][0..n-1] is input, not as the original matrix a but as 
+ * its LU decomposition, determined by the routine lu_decomp().  b[0..n-1] is input as the right hand side vector b 
+ * and returns with the left-hand solution vector x.  a, n, and index are not modified by this routine and can be left 
+ * in place for successive calls with different right hand sides b[0..n-1].  This routine takes into account the 
+ * possibility that b will begin with a lot of zeros so that it is efficient for use in matrix inversion.
  */
 template<typename SquareMatrix, typename VectorInt, typename Vector>
   void
@@ -208,10 +214,10 @@ template<typename SquareMatrix, typename VectorInt, typename Vector>
 
 
 /**
- *  Improves a solution vector x of the linear set A.x = b.  The matrix a and the
- *  LU decomposition of a a_lu (with its row permutation vector index) and the
- *  right-hand side vector are input along with the solution vector x.  
- *  The solution vector x is improved and modified on output.
+ * Improves a solution vector x of the linear set A.x = b.  The matrix a and the
+ * LU decomposition of a a_lu (with its row permutation vector index) and the
+ * right-hand side vector are input along with the solution vector x.  
+ * The solution vector x is improved and modified on output.
  */
 template<typename SquareMatrix, typename VectorInt, typename Vector>
   void
@@ -240,9 +246,9 @@ template<typename SquareMatrix, typename VectorInt, typename Vector>
 
 
 /**
- *  Inverts a matrix given the LU decomposed matrix.
+ * Inverts a matrix given the LU decomposed matrix.
  *
- *  The inverse matrix is NOT in LU form.
+ * The inverse matrix is NOT in LU form.
  */
 template<typename SquareMatrix, typename VectorInt>
   void
@@ -267,7 +273,7 @@ template<typename SquareMatrix, typename VectorInt>
 
 
 /**
- *  Compute determinant of LU decomposed matrix.
+ * Compute determinant of LU decomposed matrix.
  */
 template<typename NumTp, typename SquareMatrix>
   NumTp
@@ -283,7 +289,7 @@ template<typename NumTp, typename SquareMatrix>
 
 
 /**
- *  Compute trace of LU decomposed matrix.
+ * Compute trace of LU decomposed matrix.
  */
 template<typename SquareMatrix>
   auto
