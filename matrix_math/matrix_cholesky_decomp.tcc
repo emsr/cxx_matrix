@@ -15,33 +15,33 @@ namespace matrix
 /**
  *  This class represents a Cholesky decomposition of a square matrix.
  */
-template<typename SquareMatrix, typename Vector>
+template<typename _SquareMatrix, typename _Vector>
   class cholesky_decomposition
   {
 
   public:
 
-    using value_type = decltype(SquareMatrix{}[0][0]);
+    using value_type = decltype(_SquareMatrix{}[0][0]);
 
-    template<typename SquareMatrix2, typename Vector2>
-      cholesky_decomposition(std::size_t n, const SquareMatrix2 & a, Vector2 & d);
+    template<typename _SquareMatrix2, typename _Vector2>
+      cholesky_decomposition(std::size_t n, const _SquareMatrix2& a, _Vector2& d);
 
-    template<typename Vector2, typename VectorOut>
-      void backsubstitute(const Vector2 & b, VectorOut & x) const;
+    template<typename _Vector2, typename _VectorOut>
+      void backsubstitute(const _Vector2& b, _VectorOut& x) const;
 
     template<typename InVecIter, typename OutVecIter>
       void
       backsubstitution(InVecIter b_begin, InVecIter b_end,
                        OutVecIter x_begin) const;
 
-    template<typename SquareMatrix2>
-      void inverse(SquareMatrix2 & a_inv) const;
+    template<typename _SquareMatrix2>
+      void inverse(_SquareMatrix2& a_inv) const;
 
   private:
 
     std::size_t m_n;
 
-    SquareMatrix m_a;
+    _SquareMatrix m_a;
 
     std::vector<value_type> m_d;
   };
@@ -50,9 +50,9 @@ template<typename SquareMatrix, typename Vector>
 /**
  *  
  */
-template<typename SquareMatrix, typename Vector>
+template<typename _SquareMatrix, typename _Vector>
   void
-  cholesky_decomp(std::size_t n, SquareMatrix & a, Vector & d)
+  cholesky_decomp(std::size_t n, _SquareMatrix& a, _Vector& d)
   {
     for (std::size_t i = 0; i < n; ++i)
       {
@@ -77,9 +77,9 @@ template<typename SquareMatrix, typename Vector>
 /**
  *  
  */
-template<typename SquareMatrix, typename Vector>
+template<typename _SquareMatrix, typename _Vector>
   void
-  cholesky_backsub(std::size_t n, const SquareMatrix & a, const Vector & d, const Vector & b, Vector & x)
+  cholesky_backsub(std::size_t n, const _SquareMatrix& a, const _Vector& d, const _Vector& b, _Vector& x)
   {
     for (std::size_t i = 0; i < n; ++i)
       {
@@ -101,18 +101,18 @@ template<typename SquareMatrix, typename Vector>
 /**
  *  
  */
-template<typename SquareMatrix, typename Vector>
+template<typename _SquareMatrix, typename _Vector>
   void
-  cholesky_invert(std::size_t n, SquareMatrix & a, const Vector & d)
+  cholesky_invert(std::size_t n, _SquareMatrix& a, const _Vector& d)
   {
-    using NumTp = decltype(SquareMatrix{}[0][0]);
+    using _NumTp = decltype(_SquareMatrix{}[0][0]);
 
     for (std::size_t i = 0; i < n; ++i)
       {
-	a[i][i] = NumTp(1) / d[i];
+	a[i][i] = _NumTp{1} / d[i];
 	for (std::size_t j = i + 1; j < n; ++j)
           {
-            auto sum = NumTp(0);
+            auto sum = _NumTp{0};
             for (std::size_t k = i; k < j; ++k)
               sum -= a[j][k] * a[k][i];
             a[j][i] = sum / d[j];
