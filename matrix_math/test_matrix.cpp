@@ -19,7 +19,6 @@ LD_LIBRARY_PATH=$HOME/bin/lib64:$LD_LIBRARY_PATH ./test_matrix
 int
 main()
 {
-
   const std::size_t M = 3, N = 3;
   double a_sing[M][N]{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
   double a[M][N]{{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
@@ -30,9 +29,9 @@ main()
   std::cout << "\n  det(a) = " << std::setw(10) << detA << '\n';
 
   std::cout << "\nA\n";
-  for (auto & row : a)
+  for (auto& row : a)
     {
-      for (auto & col : row)
+      for (auto& col : row)
         std::cout << ' ' << std::setw(10) << col;
       std::cout << '\n';
     }
@@ -44,9 +43,9 @@ main()
   matrix::lu_decomp(3, a, index, parity);
 
   std::cout << "\nA_LU\n";
-  for (auto & row : a)
+  for (auto& row : a)
     {
-      for (auto & col : row)
+      for (auto& col : row)
         std::cout << ' ' << std::setw(10) << col;
       std::cout << '\n';
     }
@@ -59,9 +58,9 @@ main()
   matrix::lu_invert(3, a, index, a_inv);
 
   std::cout << "\nA^-1\n";
-  for (auto & row : a_inv)
+  for (auto& row : a_inv)
     {
-      for (auto & col : row)
+      for (auto& col : row)
         std::cout << ' ' << std::setw(10) << col;
       std::cout << '\n';
     }
@@ -77,9 +76,9 @@ main()
       }
 
   std::cout << "\nA^-1.A\n";
-  for (auto & row : I)
+  for (auto& row : I)
     {
-      for (auto & col : row)
+      for (auto& col : row)
         std::cout << ' ' << std::setw(10) << col;
       std::cout << '\n';
     }
