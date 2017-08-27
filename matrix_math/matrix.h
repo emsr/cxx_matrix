@@ -36,11 +36,11 @@ template<class Numeric>
 
  we would want this:
 
-template<class Matrix>
+template<class _Matrix>
   bool
-  lu_decomp(const unsigned long n, Matrix & a, std::vector<int > & index, Matrix::value_type & parity)
+  lu_decomp(const unsigned long n, _Matrix & a, std::vector<int > & index, _Matrix::value_type & parity)
 
- where the numeric type might be Matrix::value_type
+ where the numeric type might be _Matrix::value_type
 
 */
 
@@ -124,10 +124,9 @@ template<typename Tp>
 }  //  namespace matrix
 
 #include "matrix_lu_decomp.tcc"
-
 #include "matrix_qr_decomp.tcc"
-
 #include "matrix_sv_decomp.tcc"
-
 #include "matrix_cholesky_decomp.tcc"
-
+#include "matrix_gauss_jordan.tcc"
+#include "matrix_tridiag.tcc"
+#include "matrix_vandermonde.tcc"
