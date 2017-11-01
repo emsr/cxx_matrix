@@ -72,11 +72,14 @@ template<typename HermitianMatrix, typename Vector>
 	      a[j][i] = sum / d[i];
 	  }
       }
+    for (std::size_t j = 0; j < n; ++j)
+      for (std::size_t i = 0; i < j; ++i)
+	a[i][j] = 0;
   }
 
 
 /**
- * 
+ * Solve the system @f$ Ax = b @f$ with a Cholesky decomposition.
  */
 template<typename HermitianMatrix, typename Vector>
   void
@@ -105,21 +108,28 @@ template<typename HermitianMatrix, typename Vector>
  */
 template<typename HermitianMatrix, typename Vector>
   void
-  cholesky_invert(std::size_t n, HermitianMatrix& a, const Vector& d)
+  cholesky_invert(std::size_t n, const HermitianMatrix& a, const Vector& d,
+		  HermitianMatrix& a_inv)
   {
-    using NumTp = decltype(HermitianMatrix{}[0][0]);
+    using NumTp = std::decay_t<decltype(a[0][0])>;
 
-    for (std::size_t i = 0; i < n; ++i)
-      {
-	a[i][i] = NumTp{1} / d[i];
-	for (std::size_t j = i + 1; j < n; ++j)
-	  {
-	    auto sum = NumTp{0};
-	    for (std::size_t k = i; k < j; ++k)
-	      sum -= a[j][k] * a[k][i];
-	    a[j][i] = sum / d[j];
-	  }
-      }
+    for (std::ptrdiff_t i = 0; i < n; ++i)
+      for (std::ptrdiff_t j = 0; j <= i; ++j)
+	{
+	  auto sum = (j == i ? NumTp{1} : NumTp{0});
+	  for (std::ptrdiff_t k = i - 1; k >= j; --k)
+	    sum -= a[i][k] * a_inv[j][k];
+	  a_inv[j][i] = sum / d[i];
+	}
+
+    for (std::ptrdiff_t i = n - 1; i >= 0; --i)
+      for (std::ptrdiff_t j = 0; j <= i; ++j)
+	{
+	  auto sum = (i < j ? NumTp{0} : a_inv[j][i]);
+	  for (std::ptrdiff_t k = i + 1; k < n; ++k)
+	    sum -= a[k][i] * a_inv[j][k];
+	  a_inv[i][j] = a_inv[j][i] = sum / d[i];
+	}
   }
 
 }  //  namespace matrix
