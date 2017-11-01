@@ -212,6 +212,18 @@ main()
   std::cout << "\n Output vector of Cholesky decompostion:\n";
   matrix::print_matrix(D_C);
 
+  decltype(A_C) A_C_inv;
+  matrix::cholesky_invert(3, A_C, D_C, A_C_inv);
+
+  std::cout << "\n Inverse of input matrix:\n";
+  matrix::print_matrix(A_C_inv);
+
+  decltype(A_C) I_C;
+  matrix::mul_matrix(I_C, A_C_inv, A_in);
+
+  std::cout << "\n Verify A^{-1}.A = I\n";
+  matrix::print_matrix(I_C);
+
   // QR Decomposition
 
   double A_QR[3][3];
