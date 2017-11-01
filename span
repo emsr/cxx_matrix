@@ -1,0 +1,295 @@
+#include <cstdint>
+#include <type_traits>
+#include <array>
+#include <iterator>
+
+namespace std
+{
+  // [views.constants], constants
+
+  constexpr ptrdiff_t dynamic_extent = -1;
+
+  // [span], class template span
+
+  /**
+   * 
+   */
+  template<typename _ElementType, ptrdiff_t _Extent = dynamic_extent>
+    class span
+    {
+    public:
+
+      // constants and types
+
+      using element_type = _ElementType;
+      using value_type = std::remove_cv_t<_ElementType>;
+      using index_type = ptrdiff_t;
+      using difference_type = ptrdiff_t;
+      using pointer = element_type*;
+      using reference = element_type&;
+      using iterator = pointer; /* implementation-defined */
+      using const_iterator = const pointer; /* implementation-defined */
+      using reverse_iterator = reverse_iterator<iterator>;
+      ////using const_reverse_iterator = reverse_iterator<const_iterator>
+
+      constexpr static index_type extent = _Extent;
+
+      // [span.cons], span constructors, copy, assignment, and destructor
+
+      constexpr
+      span() noexcept
+      { }
+
+      constexpr
+      span(nullptr_t) noexcept
+      { }
+
+      constexpr
+      span(pointer __ptr, index_type __count)
+      : _M_data{__ptr}, _M_size{__count}
+      { }
+
+      constexpr
+      span(pointer __first, pointer __last)
+      : _M_data{__first}, _M_size{distance(__first, __last)}
+      { }
+
+      template<size_t _Num>
+	constexpr
+	span(element_type (&__arr)[_Num])
+	: _M_data{__arr}, _M_size{_Num}
+	{ /*Warn if extent > _Num*/ }
+
+      template<size_t _Num>
+	constexpr
+	span(array<remove_const_t<element_type>, _Num>& __arr)
+	: _M_data{__arr}, _M_size{_Num}
+	{ /*Warn if extent > _Num*/ }
+
+      // is_const_v<element_type>
+      template<size_t _Num>
+	constexpr
+	span(const array<remove_const_t<element_type>, _Num>& __arr)
+	: _M_data{__arr.data()}, _M_size{__arr.size()}
+	{ /*Warn if extent > _Num*/ }
+
+      template<typename _Container>
+	constexpr
+	span(_Container& __cont)
+	: _M_data{__cont.data()}, _M_size{__cont.size()}
+	{ }
+
+      template<typename _Container>
+	span(const _Container& __cont)
+	: _M_data{__cont.data()}, _M_size{__cont.size()}
+	{ }
+
+      constexpr
+      span(const span& __other) noexcept = default;
+
+      constexpr
+      span(span&& __other) noexcept = default;
+
+      template<typename _ElementType2, ptrdiff_t _Extent2>
+	constexpr
+	span(const span<_ElementType2, _Extent2>& __other);
+
+      template<typename _ElementType2, ptrdiff_t _Extent2>
+	constexpr
+	span(span<_ElementType2, _Extent2>&& __other);
+
+      ~span() noexcept = default;
+
+      constexpr span&
+      operator=(const span& __other) noexcept = default;
+
+      constexpr span&
+      operator=(span&& __other) noexcept = default;
+
+      // [span.sub], span subviews
+
+      template <ptrdiff_t _Count>
+	constexpr span<element_type, _Count>
+	first() const
+	{
+	  using __span_t = span<element_type, _Count>;
+	  return __span_t(this->data(), _Count);
+	}
+
+      template <ptrdiff_t _Count>
+	constexpr span<element_type, _Count>
+	last() const
+	{
+	  using __span_t = span<element_type, _Count>;
+	  return __span_t(this->data() + (this->size() - _Count), _Count);
+	}
+
+      template <ptrdiff_t Offset, ptrdiff_t _Count = dynamic_extent>
+	constexpr span<element_type, _Count>
+	subspan() const
+	{
+	  using __span_t = span<element_type, _Count>;
+	  __span_t(this->data() + _Offset,
+		   _Count == dynamic_extent
+		   ? this->size() - _Offset
+		   : _Count);
+	}
+
+      // count >= 0 && count <= size()
+      constexpr span<element_type, dynamic_extent>
+      first(index_type __count) const
+      { return span<element_type>(this->data(), __count); }
+
+      // count >= 0 && count <= size()
+      constexpr span<element_type, dynamic_extent>
+      last(index_type __count) const
+      {
+	using __span_t = span<element_type>;
+	return __span_t(this->data() + (this->size() - __count), __count);
+      }
+
+      // (offset == 0 || offset > 0 && offset < size())
+      // && (count == dynamic_extent || count >= 0 && offset + count <= size())
+      constexpr span<element_type, dynamic_extent>
+      subspan(index_type __offset, index_type __count = dynamic_extent) const
+      {
+	using __span_t = span<element_type>;
+	return __span_t(this->data() + __offset,
+			__count == dynamic_extent
+			? this->size() - __offset
+			: __count);
+      }
+
+      // [span.obs], span observers
+
+      constexpr index_type
+      length() const noexcept
+      { return this->size(); }
+
+      constexpr index_type
+      size() const noexcept
+      { return this->_M_size; }
+
+      constexpr index_type
+      length_bytes() const noexcept
+      { return this->size_bytes(); }
+
+      constexpr index_type
+      size_bytes() const noexcept
+      { return this->_M_size * sizeof(element_type); }
+
+      constexpr bool
+      empty() const noexcept
+      { return this->_M_data == nullptr || this->_M_size == 0; }
+
+      // [span.elem], span element access
+
+      constexpr reference
+      operator[](index_type __idx) const
+      { return this->_M_data[__idx]; }
+
+      constexpr reference
+      operator()(index_type __idx) const
+      { return this->_M_data[__idx]; }
+
+      constexpr pointer
+      data() const noexcept
+      { return this->_M_data; }
+
+      // [span.iter], span iterator support
+
+      iterator
+      begin() const noexcept
+      { return this->_M_data; }
+
+      iterator
+      end() const noexcept
+      { return this->_M_data + this->_M_size; }
+
+      const_iterator
+      cbegin() const noexcept
+      { return this->_M_data; }
+
+      const_iterator
+      cend() const noexcept
+      { return this->_M_data + this->_M_size; }
+
+      reverse_iterator
+      rbegin() const noexcept
+      { return reverse_iterator(this->end()); }
+
+      reverse_iterator
+      rend() const noexcept
+      { return reverse_iterator(this->begin()); }
+
+      const_reverse_iterator
+      crbegin() const noexcept
+      { return reverse_iterator(this->cend()); }
+
+      const_reverse_iterator
+      crend() const noexcept
+      { return reverse_iterator(this->cbegin()); }
+
+    private:
+
+      pointer _M_data = nullptr;
+
+      index_type _M_size = 0;
+  };
+
+  // [span.comparison], span comparison operators
+
+  template<typename _ElementType, ptrdiff_t _Extent>
+    constexpr bool
+    operator==(const span<_ElementType, _Extent>& __lhs,
+	       const span<_ElementType, _Extent>& __rhs)
+    { return equal(l.begin(), l.end(), r.begin(), r.end()); }
+
+  template<typename _ElementType, ptrdiff_t _Extent>
+    constexpr bool
+    operator!=(const span<_ElementType, _Extent>& __lhs,
+	       const span<_ElementType, _Extent>& __rhs)
+    { return !(__lhs == __rhs); }
+
+  template<typename _ElementType, ptrdiff_t _Extent>
+    constexpr bool
+    operator<(const span<_ElementType, _Extent>& __lhs,
+	      const span<_ElementType, _Extent>& __rhs)
+    {
+      return lexicographical_compare(__lhs.begin(), __lhs.end(),
+				     __rhs.begin(), __rhs.end());
+    }
+
+  template<typename _ElementType, ptrdiff_t _Extent>
+    constexpr bool
+    operator<=(const span<_ElementType, _Extent>& __lhs,
+	       const span<_ElementType, _Extent>& __rhs)
+    { return !(__rhs < __lhs); }
+
+  template<typename _ElementType, ptrdiff_t _Extent>
+    constexpr bool
+    operator>(const span<_ElementType, _Extent>& __lhs,
+	      const span<_ElementType, _Extent>& __rhs)
+    { return __rhs < __lhs; }
+
+  template<typename _ElementType, ptrdiff_t _Extent>
+    constexpr bool
+    operator>=(const span<_ElementType, _Extent>& __lhs,
+	       const span<_ElementType, _Extent>& __rhs)
+    { return !(__lhs < __rhs); }
+
+  // [span.objectrep], views of object representation
+
+  template<typename _ElementType, ptrdiff_t _Extent>
+    span<const char, ((_Extent == dynamic_extent)
+		      ? dynamic_extent
+		      : (sizeof(_ElementType) * _Extent))>
+    as_bytes(span<_ElementType, _Extent> s) noexcept;
+
+  template<typename _ElementType, ptrdiff_t _Extent>
+    span<char, ((_Extent == dynamic_extent)
+		? dynamic_extent
+		:(sizeof(_ElementType) * _Extent))>
+    as_writeable_bytes(span<_ElementType, _Extent>) noexcept;
+
+} // namespace std
