@@ -33,7 +33,7 @@ LD_LIBRARY_PATH=$HOME/bin/lib64:$LD_LIBRARY_PATH ./test_vandermonde
 	  auto __half = __gnu_cxx::__fp_is_equal<_Tp>(__arg, _Tp{0.5L});
 	  auto __z = (__half ? _Tp{0} : __gnu_cxx::cos_pi(__arg));
 	  auto __w = _S_pi * (_Tp{1} - __z * __z) / _Tp(__n + 1);
-	  __pt[__k - 1].__zero = __z;
+	  __pt[__k - 1].__point = __z;
 	  __pt[__k - 1].__weight = __w;
 	}
       return __pt;
@@ -57,7 +57,7 @@ template<typename _Tp>
     std::vector<__gnu_cxx::__quadrature_point_t<_Tp>> __out(__n + 1);
     if (__n == 1)
       {
-	__out[0].__zero = _Tp{0};
+	__out[0].__point = _Tp{0};
 	__out[0].__weight = _Tp{2};
 	return __out;
       }
@@ -65,11 +65,11 @@ template<typename _Tp>
       {
 	const auto _S_pi = __gnu_cxx::__const_pi<_Tp>();
 	auto uz = __chebyshev_u_zeros<_Tp>(__n - 1);
-	__out[0].__zero = _Tp{+1};
+	__out[0].__point = _Tp{+1};
 	__out[0].__weight = _Tp{1} / (__n * __n - 1 + __n % 2);
 	for (auto __k = 1u; __k <= uz.size(); ++__k)
 	  {
-	    __out[__k].__zero = uz[__k - 1].__zero;
+	    __out[__k].__point = uz[__k - 1].__point;
 
 	    auto __sum = _Tp{0};
 	    for (auto __j = 1u; __j <= __n / 2; ++__j)
@@ -81,7 +81,7 @@ template<typename _Tp>
 	    auto __w = _Tp{2} * (_Tp{1} - __sum) / _Tp(__n);
 	    __out[__k].__weight = __w;
 	  }
-	__out[__n].__zero = _Tp{-1};
+	__out[__n].__point = _Tp{-1};
 	__out[__n].__weight = __out[0].__weight;
 	return __out;
       }
@@ -101,7 +101,7 @@ template<typename _Tp>
 	auto ccvec = build_clenshaw_curtis_sum<long double>(n);
 	for (const auto& cc : ccvec)
 	  {
-	    std::cout << std::setw(w) << cc.__zero << ' '
+	    std::cout << std::setw(w) << cc.__point << ' '
 		      << std::setw(w) << cc.__weight << ' '
 		      << '\n';
 	  }
@@ -113,7 +113,7 @@ template<typename _Tp>
 	    for (int j = 0; j < n; ++j)
 	      {
 		vdm[i][j] = xk;
-		xk *= ccvec[i].__zero;
+		xk *= ccvec[i].__point;
 	      }
 	  }
       }
