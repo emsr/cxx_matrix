@@ -1,7 +1,8 @@
 
-// $HOME/bin/bin/g++ -o test_matrix test_matrix.cpp
-
-// LD_LIBRARY_PATH=$HOME/bin/lib64:$LD_LIBRARY_PATH ./test_matrix
+/*
+$HOME/bin/bin/g++ -std=c++17 -o test_matrix test_matrix.cpp
+LD_LIBRARY_PATH=$HOME/bin/lib64:$LD_LIBRARY_PATH ./test_matrix
+*/
 
 #include <iostream>
 #include <iomanip>

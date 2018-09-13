@@ -15,9 +15,9 @@ namespace matrix
  * On output, a is replaced by its inverse, and b is replaced by the corresponding set of
  *solution vectors.
  */
-template<typename NumTp, typename SquareMatrix, typename Matrix>
+template<typename NumTp, typename _SquareMatrix, typename _Matrix>
   void
-  gauss_jordan(SquareMatrix& a, std::size_t n, Matrix& b, std::size_t m)
+  gauss_jordan(_SquareMatrix& a, std::size_t n, _Matrix& b, std::size_t m)
   {
     const auto imax = std::numeric_limits<std::size_t>::max();
 

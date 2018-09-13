@@ -15,33 +15,33 @@ namespace matrix
 /**
  * This class represents a Cholesky decomposition of a square matrix.
  */
-template<typename HermitianMatrix, typename Vector>
+template<typename _HermitianMatrix, typename _Vector>
   class cholesky_decomposition
   {
 
   public:
 
-    using value_type = decltype(HermitianMatrix{}[0][0]);
+    using value_type = decltype(_HermitianMatrix{}[0][0]);
 
-    template<typename HermitianMatrix2, typename Vector2>
-      cholesky_decomposition(std::size_t n, const HermitianMatrix2& a, Vector2& d);
+    template<typename _HermitianMatrix2, typename _Vector2>
+      cholesky_decomposition(std::size_t n, const _HermitianMatrix2& a, _Vector2& d);
 
-    template<typename Vector2, typename VectorOut>
-      void backsubstitute(const Vector2  b, VectorOut& x) const;
+    template<typename _Vector2, typename _VectorOut>
+      void backsubstitute(const _Vector2  b, _VectorOut& x) const;
 
     template<typename InVecIter, typename OutVecIter>
       void
       backsubstitution(InVecIter b_begin, InVecIter b_end,
 		       OutVecIter x_begin) const;
 
-    template<typename HermitianMatrix2>
-      void inverse(HermitianMatrix2& a_inv) const;
+    template<typename _HermitianMatrix2>
+      void inverse(_HermitianMatrix2& a_inv) const;
 
   private:
 
     std::size_t m_n;
 
-    HermitianMatrix m_a;
+    _HermitianMatrix m_a;
 
     std::vector<value_type> m_d;
   };
@@ -50,9 +50,9 @@ template<typename HermitianMatrix, typename Vector>
 /**
  * 
  */
-template<typename HermitianMatrix, typename Vector>
+template<typename _HermitianMatrix, typename _Vector>
   void
-  cholesky_decomp(std::size_t n, HermitianMatrix& a, Vector& d)
+  cholesky_decomp(std::size_t n, _HermitianMatrix& a, _Vector& d)
   {
     for (std::size_t i = 0; i < n; ++i)
       {
@@ -81,10 +81,10 @@ template<typename HermitianMatrix, typename Vector>
 /**
  * Solve the system @f$ Ax = b @f$ with a Cholesky decomposition.
  */
-template<typename HermitianMatrix, typename Vector>
+template<typename _HermitianMatrix, typename _Vector>
   void
-  cholesky_backsub(std::size_t n, const HermitianMatrix& a,
-		   const Vector& d, const Vector& b, Vector& x)
+  cholesky_backsub(std::size_t n, const _HermitianMatrix& a,
+		   const _Vector& d, const _Vector& b, _Vector& x)
   {
     for (std::size_t i = 0; i < n; ++i)
       {
@@ -106,10 +106,10 @@ template<typename HermitianMatrix, typename Vector>
 /**
  * 
  */
-template<typename HermitianMatrix, typename Vector>
+template<typename _HermitianMatrix, typename _Vector>
   void
-  cholesky_invert(std::size_t n, const HermitianMatrix& a, const Vector& d,
-		  HermitianMatrix& a_inv)
+  cholesky_invert(std::size_t n, const _HermitianMatrix& a, const _Vector& d,
+		  _HermitianMatrix& a_inv)
   {
     using NumTp = std::decay_t<decltype(a[0][0])>;
 

@@ -65,9 +65,9 @@ namespace matrix
     void
     print_matrix(const Numeric (&mat)[M][N])
     {
-      for (auto & row : mat)
+      for (auto& row : mat)
 	{
-	  for (auto & col : row)
+	  for (auto& col : row)
 	    std::cout << ' ' << std::setw(10) << col;
 	  std::cout << '\n';
 	}
@@ -77,7 +77,7 @@ namespace matrix
     void
     print_matrix(const Numeric (&mat)[M])
     {
-      for (auto & row : mat)
+      for (auto& row : mat)
 	std::cout << ' ' << std::setw(10) << row;
       std::cout << '\n';
     }

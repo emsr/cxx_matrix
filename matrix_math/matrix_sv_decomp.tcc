@@ -15,35 +15,35 @@ namespace matrix
 /**
  *  This class represents an singular value decomposition of a matrix.
  */
-template<typename NumTp, typename Matrix>
+template<typename NumTp, typename _Matrix>
   class sv_decomposition
   {
 
   public:
 
-    using value_type = decltype(Matrix{}[0][0]);
+    using value_type = std::decay_t<decltype(_Matrix{}[0][0])>;
 
-    template<typename Matrix2>
+    template<typename _Matrix2>
       sv_decomposition(std::size_t m_n_rows, std::size_t n_cols,
-		       Matrix2& a);
+		       _Matrix2& a);
 
-    template<typename Vector2, typename VectorOut>
+    template<typename _Vector2, typename _VectorOut>
       void
-      backsubstitution(const Vector2 & b, VectorOut & x) const;
+      backsubstitution(const _Vector2& b, _VectorOut& x) const;
 
-    template<typename InVecIter, typename OutVecIter>
+    template<typename _InVecIter, typename _OutVecIter>
       void
-      backsubstitution(InVecIter b_begin, InVecIter b_end,
-		       OutVecIter x_begin) const;
+      backsubstitution(_InVecIter b_begin, _InVecIter b_end,
+		       _OutVecIter x_begin) const;
 
-    template<typename Matrix2, typename Vector2, typename VectorOut>
+    template<typename _Matrix2, typename _Vector2, typename _VectorOut>
       void
-      improve(const Matrix2 a_orig,
-	      const Vector2 & b, VectorOut & x) const;
+      improve(const _Matrix2 a_orig,
+	      const _Vector2& b, _VectorOut& x) const;
 
-    template<typename Matrix2, typename InVecIter, typename OutVecIter>
+    template<typename _Matrix2, typename InVecIter, typename OutVecIter>
       void
-      improve(const Matrix2 a_orig,
+      improve(const _Matrix2 a_orig,
 	      InVecIter b_begin, InVecIter b_end,
 	      OutVecIter x_begin) const;
 
@@ -53,7 +53,7 @@ template<typename NumTp, typename Matrix>
 
     std::size_t m_n_cols;
 
-    Matrix m_a;
+    _Matrix m_a;
 
     std::vector<std::size_t> m_w;
 
@@ -64,10 +64,10 @@ template<typename NumTp, typename Matrix>
 /**
  *  
  */
-template<typename Matrix, typename Vector>
+template<typename _Matrix, typename _Vector>
   void
   sv_decomp(const std::size_t n_rows, const std::size_t n_cols,
-	    Matrix& a, Vector& w, Matrix& v)
+	    _Matrix& a, _Vector& w, _Matrix& v)
   {
     using NumTp = std::remove_reference_t<decltype(a[0][0])>;
 
@@ -333,12 +333,12 @@ template<typename Matrix, typename Vector>
 /**
  *  
  */
-template<typename Matrix, typename Vector>
+template<typename _Matrix, typename _Vector>
   void
   sv_backsub(std::size_t n_rows, std::size_t n_cols,
-	     const Matrix& u,
-	     const Vector& w, const Matrix& v,
-	     const Vector& b, Vector& x)
+	     const _Matrix& u,
+	     const _Vector& w, const _Matrix& v,
+	     const _Vector& b, _Vector& x)
   {
     using NumTp = std::remove_reference_t<decltype(u[0][0])>;
 
@@ -370,16 +370,16 @@ template<typename Matrix, typename Vector>
 
 /**
  *  Improves a solution vector x of the linear set A.x = b.
- *  The matrix a and the SV decomposition of a -- u, w, v and the
- *  right-hand side vector are input along with the solution vector x.
+ *  The _Matrix a and the SV decomposition of a -- u, w, v and the
+ *  right-hand side _Vector are input along with the solution vector x.
  *  The solution vector x is improved and modified on output.
  */
-template<typename Matrix, typename Vector>
+template<typename _Matrix, typename _Vector>
   void
   sv_improve(std::size_t n_rows, std::size_t n_cols,
-	     const Matrix& a, const Matrix& u,
-	     const Vector& w, const Matrix& v,
-	     const Vector& b, Vector& x)
+	     const _Matrix& a, const _Matrix& u,
+	     const _Vector& w, const _Matrix& v,
+	     const _Vector& b, _Vector& x)
   {
     using NumTp = std::remove_reference_t<decltype(a[0][0])>;
 
