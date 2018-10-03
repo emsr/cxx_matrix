@@ -10,37 +10,59 @@ template<typename _Num, std::size_t _Dim>
   {
     static_assert(std::is_arithmetic_v<_Num>);
 
-    constexpr space_point() = default; // Origin {0, ...}
+    // Origin.
+    constexpr
+    space_point()
+    { this->fill(_Num{}); }
+
+    constexpr
+    space_point(std::initializer_list<_Num> __il)
+    {
+      const auto __n = std::min(_Dim, __il.size());
+      std::copy(__il.begin(), __il.begin() + __n, this->begin());
+      if (__n < _Dim)
+	std::fill(this->begin() + __n, this->end(), _Num{});
+    }
   };
 
 template<typename _Num>
+  using pt1 = space_point<_Num, 1u>;
+using pt1f   = pt1<float>;
+using pt1d   = pt1<double>;
+using pt1l   = pt1<long double>;
+using pt1s   = pt1<short>;
+using pt1i   = pt1<int>;
+using pt1li  = pt1<long>;
+using pt1lli = pt1<long long>;
+
+template<typename _Num>
   using pt2 = space_point<_Num, 2u>;
-using pt2f = pt2<float>;
-using pt2d = pt2<double>;
-using pt2l = pt2<long double>;
-using pt2s = pt2<short>;
-using pt2i = pt2<int>;
-using pt2li = pt2<long>;
+using pt2f   = pt2<float>;
+using pt2d   = pt2<double>;
+using pt2l   = pt2<long double>;
+using pt2s   = pt2<short>;
+using pt2i   = pt2<int>;
+using pt2li  = pt2<long>;
 using pt2lli = pt2<long long>;
 
 template<typename _Num>
   using pt3 = space_point<_Num, 3u>;
-using pt3f = pt3<float>;
-using pt3d = pt3<double>;
-using pt3l = pt3<long double>;
-using pt3s = pt3<short>;
-using pt3i = pt3<int>;
-using pt3li = pt3<long>;
+using pt3f   = pt3<float>;
+using pt3d   = pt3<double>;
+using pt3l   = pt3<long double>;
+using pt3s   = pt3<short>;
+using pt3i   = pt3<int>;
+using pt3li  = pt3<long>;
 using pt3lli = pt3<long long>;
 
 template<typename _Num>
   using pt4 = space_point<_Num, 4u>;
-using pt4f = pt4<float>;
-using pt4d = pt4<double>;
-using pt4l = pt4<long double>;
-using pt4s = pt4<short>;
-using pt4i = pt4<int>;
-using pt4li = pt4<long>;
+using pt4f   = pt4<float>;
+using pt4d   = pt4<double>;
+using pt4l   = pt4<long double>;
+using pt4s   = pt4<short>;
+using pt4i   = pt4<int>;
+using pt4li  = pt4<long>;
 using pt4lli = pt4<long long>;
 
 template<typename _Num, std::size_t _Dim>
@@ -48,36 +70,60 @@ template<typename _Num, std::size_t _Dim>
   : public std::array<_Num, _Dim>
   {
     static_assert(std::is_arithmetic_v<_Num>);
-  };
+
+    // Null vector.
+    constexpr
+    space_vector()
+    { this->fill(_Num{}); }
+
+    constexpr
+    space_vector(std::initializer_list<_Num> __il)
+    {
+      const auto __n = std::min(_Dim, __il.size());
+      std::copy(__il.begin(), __il.begin() + __n, this->begin());
+      if (__n < _Dim)
+	std::fill(this->begin() + __n, this->end(), _Num{});
+    }
+ };
+
+template<typename _Num>
+  using vec1 = space_vector<_Num, 1u>;
+using vec1f = vec1<float>;
+using vec1d = vec1<double>;
+using vec1l = vec1<long double>;
+using vec1s = vec1<short>;
+using vec1i = vec1<int>;
+using vec1li = vec1<long>;
+using vec1lli = vec1<long long>;
 
 template<typename _Num>
   using vec2 = space_vector<_Num, 2u>;
-using vec2f = vec2<float>;
-using vec2d = vec2<double>;
-using vec2l = vec2<long double>;
-using vec2s = vec2<short>;
-using vec2i = vec2<int>;
-using vec2li = vec2<long>;
+using vec2f   = vec2<float>;
+using vec2d   = vec2<double>;
+using vec2l   = vec2<long double>;
+using vec2s   = vec2<short>;
+using vec2i   = vec2<int>;
+using vec2li  = vec2<long>;
 using vec2lli = vec2<long long>;
 
 template<typename _Num>
   using vec3 = space_vector<_Num, 3u>;
-using vec3f = vec3<float>;
-using vec3d = vec3<double>;
-using vec3l = vec3<long double>;
-using vec3s = vec3<short>;
-using vec3i = vec3<int>;
-using vec3li = vec3<long>;
+using vec3f   = vec3<float>;
+using vec3d   = vec3<double>;
+using vec3l   = vec3<long double>;
+using vec3s   = vec3<short>;
+using vec3i   = vec3<int>;
+using vec3li  = vec3<long>;
 using vec3lli = vec3<long long>;
 
 template<typename _Num>
   using vec4 = space_vector<_Num, 4u>;
-using vec4f = vec4<float>;
-using vec4d = vec4<double>;
-using vec4l = vec4<long double>;
-using vec4s = vec4<short>;
-using vec4i = vec4<int>;
-using vec4li = vec4<long>;
+using vec4f   = vec4<float>;
+using vec4d   = vec4<double>;
+using vec4l   = vec4<long double>;
+using vec4s   = vec4<short>;
+using vec4i   = vec4<int>;
+using vec4li  = vec4<long>;
 using vec4lli = vec4<long long>;
 
 template<typename _Num, std::size_t _NRows, std::size_t _NCols>
@@ -185,33 +231,43 @@ template<typename _Num, std::size_t _Dim>
   };
 
 template<typename _Num>
+  using box1 = box<_Num, 1u>;
+using box1f   = box1<float>;
+using box1d   = box1<double>;
+using box1l   = box1<long double>;
+using box1s   = box1<short>;
+using box1i   = box1<int>;
+using box1li  = box1<long>;
+using box1lli = box1<long long>;
+
+template<typename _Num>
   using box2 = box<_Num, 2u>;
-using box2f = box2<float>;
-using box2d = box2<double>;
-using box2l = box2<long double>;
-using box2s = box2<short>;
-using box2i = box2<int>;
-using box2li = box2<long>;
+using box2f   = box2<float>;
+using box2d   = box2<double>;
+using box2l   = box2<long double>;
+using box2s   = box2<short>;
+using box2i   = box2<int>;
+using box2li  = box2<long>;
 using box2lli = box2<long long>;
 
 template<typename _Num>
   using box3 = box<_Num, 3u>;
-using box3f = box3<float>;
-using box3d = box3<double>;
-using box3l = box3<long double>;
-using box3s = box3<short>;
-using box3i = box3<int>;
-using box3li = box3<long>;
+using box3f   = box3<float>;
+using box3d   = box3<double>;
+using box3l   = box3<long double>;
+using box3s   = box3<short>;
+using box3i   = box3<int>;
+using box3li  = box3<long>;
 using box3lli = box3<long long>;
 
 template<typename _Num>
   using box4 = box<_Num, 4u>;
-using box4f = box4<float>;
-using box4d = box4<double>;
-using box4l = box4<long double>;
-using box4s = box4<short>;
-using box4i = box4<int>;
-using box4li = box4<long>;
+using box4f   = box4<float>;
+using box4d   = box4<double>;
+using box4l   = box4<long double>;
+using box4s   = box4<short>;
+using box4i   = box4<int>;
+using box4li  = box4<long>;
 using box4lli = box4<long long>;
 
 #endif // VEC_H

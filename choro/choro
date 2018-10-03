@@ -1,8 +1,10 @@
-#ifndef VEC_H
-#define VEC_H 1
+#ifndef CHORO
+#define CHORO 1
 
 #include "vec.h"
 
 #include "vec_math.h"
 
-#endif // VEC_H
+#include "vec_io.h"
+
+#endif // CHORO

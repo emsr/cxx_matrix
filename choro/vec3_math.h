@@ -11,4 +11,14 @@ template<typename _Num>
     return W;
   }
 
+template<typename _Num>
+  _Num
+  angle(const vec3<_Num>& U, const vec3<_Num>& V)
+  { std::atan2(cross(U, V), dot(U, V)); }
+
+template<typename _Num>
+  _Num
+  angle(const pt3<_Num>& O, const pt3<_Num>& P, const pt3<_Num>& Q)
+  { return angle(P - O, Q - O); }
+
 #endif // VEC3_MATH_H
