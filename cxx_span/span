@@ -1,36 +1,73 @@
+// The template and inlines for the -*- C++ -*- non-owning container access.
+
+// Copyright (C) 2018 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file include/cpan
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _GLIBCXX_SPAN
+#define _GLIBCXX_SPAN 1
+
+#pragma GCC system_header
+
+#if __cplusplus > 201703L
+
 #include <cstdint>
 #include <type_traits>
 #include <array>
 #include <iterator>
 
-namespace std
+namespace std _GLIBCXX_VISIBILITY(default)
 {
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
   // [views.constants], constants
 
-  constexpr ptrdiff_t dynamic_extent = -1;
+  constexpr std::ptrdiff_t dynamic_extent = -1;
 
   // [span], class template span
 
   /**
    * 
    */
-  template<typename _ElementType, ptrdiff_t _Extent = dynamic_extent>
+  template<typename _Tp, std::ptrdiff_t _Extent = dynamic_extent>
     class span
     {
     public:
 
       // constants and types
 
-      using element_type = _ElementType;
-      using value_type = std::remove_cv_t<_ElementType>;
-      using index_type = ptrdiff_t;
-      using difference_type = ptrdiff_t;
+      using element_type = _Tp;
+      using value_type = std::remove_cv_t<_Tp>;
+      using index_type = std::ptrdiff_t;
+      using difference_type = std::ptrdiff_t;
       using pointer = element_type*;
       using reference = element_type&;
       using iterator = pointer; /* implementation-defined */
       using const_iterator = const pointer; /* implementation-defined */
-      using reverse_iterator = reverse_iterator<iterator>;
-      ////using const_reverse_iterator = reverse_iterator<const_iterator>
+      using reverse_iterator = std::reverse_iterator<iterator>;
+      using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
       constexpr static index_type extent = _Extent;
 
@@ -46,42 +83,42 @@ namespace std
 
       constexpr
       span(pointer __ptr, index_type __count)
-      : _M_data{__ptr}, _M_size{__count}
+      : _M_data(__ptr), _M_size{__count}
       { }
 
       constexpr
       span(pointer __first, pointer __last)
-      : _M_data{__first}, _M_size{distance(__first, __last)}
+      : _M_data(__first), _M_size(std::distance(__first, __last))
       { }
 
       template<size_t _Num>
 	constexpr
 	span(element_type (&__arr)[_Num])
-	: _M_data{__arr}, _M_size{_Num}
+	: _M_data(__arr), _M_size(_Num)
 	{ /*Warn if extent > _Num*/ }
 
       template<size_t _Num>
 	constexpr
 	span(array<remove_const_t<element_type>, _Num>& __arr)
-	: _M_data{__arr}, _M_size{_Num}
+	: _M_data(__arr.data()), _M_size(_Num)
 	{ /*Warn if extent > _Num*/ }
 
       // is_const_v<element_type>
       template<size_t _Num>
 	constexpr
 	span(const array<remove_const_t<element_type>, _Num>& __arr)
-	: _M_data{__arr.data()}, _M_size{__arr.size()}
+	: _M_data(__arr.data()), _M_size(__arr.size())
 	{ /*Warn if extent > _Num*/ }
 
       template<typename _Container>
 	constexpr
 	span(_Container& __cont)
-	: _M_data{__cont.data()}, _M_size{__cont.size()}
+	: _M_data(__cont.data()), _M_size(__cont.size())
 	{ }
 
       template<typename _Container>
 	span(const _Container& __cont)
-	: _M_data{__cont.data()}, _M_size{__cont.size()}
+	: _M_data(__cont.data()), _M_size(__cont.size())
 	{ }
 
       constexpr
@@ -90,11 +127,11 @@ namespace std
       constexpr
       span(span&& __other) noexcept = default;
 
-      template<typename _ElementType2, ptrdiff_t _Extent2>
+      template<typename _ElementType2, std::ptrdiff_t _Extent2>
 	constexpr
 	span(const span<_ElementType2, _Extent2>& __other);
 
-      template<typename _ElementType2, ptrdiff_t _Extent2>
+      template<typename _ElementType2, std::ptrdiff_t _Extent2>
 	constexpr
 	span(span<_ElementType2, _Extent2>&& __other);
 
@@ -124,7 +161,7 @@ namespace std
 	  return __span_t(this->data() + (this->size() - _Count), _Count);
 	}
 
-      template <ptrdiff_t Offset, ptrdiff_t _Count = dynamic_extent>
+      template <ptrdiff_t _Offset, std::ptrdiff_t _Count = dynamic_extent>
 	constexpr span<element_type, _Count>
 	subspan() const
 	{
@@ -239,57 +276,83 @@ namespace std
 
   // [span.comparison], span comparison operators
 
-  template<typename _ElementType, ptrdiff_t _Extent>
+  template<typename _Tp, std::ptrdiff_t _Extent>
     constexpr bool
-    operator==(const span<_ElementType, _Extent>& __lhs,
-	       const span<_ElementType, _Extent>& __rhs)
-    { return equal(l.begin(), l.end(), r.begin(), r.end()); }
+    operator==(const span<_Tp, _Extent>& __lhs,
+	       const span<_Tp, _Extent>& __rhs)
+    { return std::equal(__lhs.begin(), __lhs.end(),
+			__rhs.begin(), __rhs.end()); }
 
-  template<typename _ElementType, ptrdiff_t _Extent>
+  template<typename _Tp, std::ptrdiff_t _Extent>
     constexpr bool
-    operator!=(const span<_ElementType, _Extent>& __lhs,
-	       const span<_ElementType, _Extent>& __rhs)
+    operator!=(const span<_Tp, _Extent>& __lhs,
+	       const span<_Tp, _Extent>& __rhs)
     { return !(__lhs == __rhs); }
 
-  template<typename _ElementType, ptrdiff_t _Extent>
+  template<typename _Tp, std::ptrdiff_t _Extent>
     constexpr bool
-    operator<(const span<_ElementType, _Extent>& __lhs,
-	      const span<_ElementType, _Extent>& __rhs)
+    operator<(const span<_Tp, _Extent>& __lhs,
+	      const span<_Tp, _Extent>& __rhs)
     {
-      return lexicographical_compare(__lhs.begin(), __lhs.end(),
-				     __rhs.begin(), __rhs.end());
+      return std::lexicographical_compare(__lhs.begin(), __lhs.end(),
+					  __rhs.begin(), __rhs.end());
     }
 
-  template<typename _ElementType, ptrdiff_t _Extent>
+  template<typename _Tp, std::ptrdiff_t _Extent>
     constexpr bool
-    operator<=(const span<_ElementType, _Extent>& __lhs,
-	       const span<_ElementType, _Extent>& __rhs)
+    operator<=(const span<_Tp, _Extent>& __lhs,
+	       const span<_Tp, _Extent>& __rhs)
     { return !(__rhs < __lhs); }
 
-  template<typename _ElementType, ptrdiff_t _Extent>
+  template<typename _Tp, std::ptrdiff_t _Extent>
     constexpr bool
-    operator>(const span<_ElementType, _Extent>& __lhs,
-	      const span<_ElementType, _Extent>& __rhs)
+    operator>(const span<_Tp, _Extent>& __lhs,
+	      const span<_Tp, _Extent>& __rhs)
     { return __rhs < __lhs; }
 
-  template<typename _ElementType, ptrdiff_t _Extent>
+  template<typename _Tp, std::ptrdiff_t _Extent>
     constexpr bool
-    operator>=(const span<_ElementType, _Extent>& __lhs,
-	       const span<_ElementType, _Extent>& __rhs)
+    operator>=(const span<_Tp, _Extent>& __lhs,
+	       const span<_Tp, _Extent>& __rhs)
     { return !(__lhs < __rhs); }
 
   // [span.objectrep], views of object representation
 
-  template<typename _ElementType, ptrdiff_t _Extent>
-    span<const char, ((_Extent == dynamic_extent)
+  template<typename _Tp, std::ptrdiff_t _Extent>
+    span<const std::byte, ((_Extent == dynamic_extent)
 		      ? dynamic_extent
-		      : (sizeof(_ElementType) * _Extent))>
-    as_bytes(span<_ElementType, _Extent> s) noexcept;
+		      : (sizeof(_Tp) * _Extent))>
+    as_bytes(span<_Tp, _Extent> s) noexcept;
 
-  template<typename _ElementType, ptrdiff_t _Extent>
-    span<char, ((_Extent == dynamic_extent)
+  template<typename _Tp, std::ptrdiff_t _Extent>
+    span<std::byte, ((_Extent == dynamic_extent)
 		? dynamic_extent
-		:(sizeof(_ElementType) * _Extent))>
-    as_writeable_bytes(span<_ElementType, _Extent>) noexcept;
+		:(sizeof(_Tp) * _Extent))>
+    as_writeable_bytes(span<_Tp, _Extent>) noexcept;
 
+  template<typename _Container>
+    span(_Container&)
+    -> span<typename _Container::value_type>;
+
+  template<typename _Container>
+    span(const _Container&)
+    -> span<std::add_const_t<typename _Container::value_type>>;
+
+  template<typename _Tp, std::size_t _Num>
+    span(_Tp(&)[_Num])
+    -> span<_Tp, _Num>;
+
+  template<typename _Tp, std::size_t _Num>
+    span(array<_Tp, _Num>&)
+    -> span<_Tp, _Num>;
+
+  template<typename _Tp, std::size_t _Num>
+    span(const array<_Tp, _Num>&)
+    -> span<std::add_const_t<_Tp>, _Num>;
+
+_GLIBCXX_END_NAMESPACE_VERSION
 } // namespace std
+
+#endif // C++20
+
+#endif  /* _GLIBCXX_SPAN */
