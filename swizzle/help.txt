@@ -1,1 +1,59 @@
 http://jojendersie.de/performance-optimal-vector-swizzling-in-c/
+
+
+	union {
+		DataType m_data[2];
+
+		detail::SwizzleProxy1<Vec1_Base<Data>,Data,0> x, r;
+		detail::SwizzleProxy1<Vec1_Base<Data>,Data,1> y, g;
+		detail::SwizzleProxy2<Vec2_Base<Data>,Data,0,0> xx, rr;
+		detail::SwizzleProxy2<Vec2_Base<Data>,Data,0,1> xy, rg;
+		detail::SwizzleProxy2<Vec2_Base<Data>,Data,1,0> yx, gr;
+		detail::SwizzleProxy2<Vec2_Base<Data>,Data,1,1> yy, gg;
+		detail::SwizzleProxy3<Vec3_Base<Data>,Data,0,0,0> xxx, rrr;
+		detail::SwizzleProxy3<Vec3_Base<Data>,Data,0,0,1> xxy, rrg;
+		detail::SwizzleProxy3<Vec3_Base<Data>,Data,0,1,0> xyx, rgr;
+
+OK, I'm not sure I'm down with swizzing higher dim objects down to lower.  But...
+Those indices should be integral constant types. _0, _1, etc.
+That would allow compile time detection of uniqueness and routing to writeable/nonwriteable.
+
+VecN N is a template parm.
+
+Attempts to index past size would be SFINAEd out,
+
+I's too bad you have to still fat finger all the permutations.
+Maybe make a swizzle writer tool.
+I could see all permutations of indices less than Dim.
+Relating the perms to a member name would take introspection or something.
+
+I should be able to get SwizzleProxy to grab Data (and Dim) out of Vec1_Base<Data>.
+Note that he has SwizzleProxy Dim and Vec_Base Dim equal.
+
+Operators:
+It seems like for:
+  class SwizzleProxy4: public CommonVectorOperators<Data>
+CommonVectorOperators, which only does array indexing,
+could do these:
+even doing the integer things.
+
+		CREATE_ASSIGMENT_OPERATOR( = )
+
+		CREATE_ASSIGMENT_OPERATOR( += )
+		CREATE_ASSIGMENT_OPERATOR( -= )
+		CREATE_ASSIGMENT_OPERATOR( *= )
+		CREATE_ASSIGMENT_OPERATOR( /= )
+
+		// The following operators are only defined for integer types.
+		CREATE_ASSIGMENT_OPERATOR( |= )
+		CREATE_ASSIGMENT_OPERATOR( &= )
+		CREATE_ASSIGMENT_OPERATOR( ^= )
+		CREATE_ASSIGMENT_OPERATOR( %= )
+		CREATE_ASSIGMENT_OPERATOR( <<= )
+		CREATE_ASSIGMENT_OPERATOR( >>= )
+
+I'd want
+point_operations
+vector_operators
+etc.
+Assignment would come from s
