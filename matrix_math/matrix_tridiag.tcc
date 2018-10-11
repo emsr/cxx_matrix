@@ -1,8 +1,12 @@
+#ifndef MATRIX_TRIDIAG_TCC
+#define MATRIX_TRIDIAG_TCC 1
 
 #include <cmath>
 
+namespace matrix
+{
 
-/*
+/**
  * Solves a tridiagonal set of equations where a[1..n] is the subdiagonal vector,
  * b[1..n] is the diagonal vector, and c[1..n] is the superdiagonal vector, and
  * r[1..n] is the right hand side vector.  The solution is u[1..n].
@@ -36,7 +40,7 @@ template<typename _Tp>
   }
 
 
-/*
+/**
  * Solves for a vector x[1..n] the cyclic set of linear equations.
  * a[[1..n], b[1..n], c[1..n], and r[1..n] are input vectors of the three diagonal rows and the
  * right side respectively.  alpha and beta are the lower and upper corner entries respectively.
@@ -75,5 +79,7 @@ template<typename _Tp>
       x[i] -= fact * z[i];
   }
 
+} // namespace matrix
 
+#endif // MATRIX_GAUSS_JORDAN_TCC
 

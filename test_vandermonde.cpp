@@ -1,7 +1,7 @@
 
 /*
-$HOME/bin/bin/g++ -std=gnu++17 -I../tr29124_test -o test_vandermonde test_vandermonde.cpp -lquadmath
-LD_LIBRARY_PATH=$HOME/bin/lib64:$LD_LIBRARY_PATH ./test_vandermonde
+$HOME/bin/bin/g++ -std=gnu++17 -Wno-psabi -I../tr29124_test -o test_vandermonde test_vandermonde.cpp -lquadmath
+./test_vandermonde > test_vandermonde.txt
 */
 
 #include <ext/cmath>
@@ -116,6 +116,26 @@ template<typename _Tp>
 		xk *= ccvec[i].__point;
 	      }
 	  }
+	//vandermonde(std::size_t n, const _Tp* x, const _Tp* q, _Tp* w);
+	using matrix_t = std::vector<std::vector<_Tp>>;
+	//matrix::lu_decomposition<_Tp, matrix_t> lu(n, vdm);
+	//lu.inverse(inv);
+	matrix_t inv(n, std::vector<_Tp>(n));
+	std::vector<int> index(n);
+	_Tp parity;
+	matrix::lu_decomp(n, vdm, index, parity);
+	matrix::lu_invert(n, vdm, index, inv);
+	for (int i = 0; i < n; ++i)
+	  {
+	    for (int j = 0; j < n; ++j)
+	      {
+		if (std::abs(inv[i][j]) < 50 * std::numeric_limits<_Tp>::epsilon())
+		  inv[i][j] = _Tp{};
+		std::cout << ' ' << inv[i][j];
+	      }
+	    std::cout << '\n';
+	  }
+	std::cout << '\n';
       }
   }
 

@@ -13,55 +13,6 @@ namespace matrix
 
 
 /**
- *  This class represents an singular value decomposition of a matrix.
- */
-template<typename NumTp, typename _Matrix>
-  class sv_decomposition
-  {
-
-  public:
-
-    using value_type = std::decay_t<decltype(_Matrix{}[0][0])>;
-
-    template<typename _Matrix2>
-      sv_decomposition(std::size_t m_n_rows, std::size_t n_cols,
-		       _Matrix2& a);
-
-    template<typename _Vector2, typename _VectorOut>
-      void
-      backsubstitution(const _Vector2& b, _VectorOut& x) const;
-
-    template<typename _InVecIter, typename _OutVecIter>
-      void
-      backsubstitution(_InVecIter b_begin, _InVecIter b_end,
-		       _OutVecIter x_begin) const;
-
-    template<typename _Matrix2, typename _Vector2, typename _VectorOut>
-      void
-      improve(const _Matrix2 a_orig,
-	      const _Vector2& b, _VectorOut& x) const;
-
-    template<typename _Matrix2, typename InVecIter, typename OutVecIter>
-      void
-      improve(const _Matrix2 a_orig,
-	      InVecIter b_begin, InVecIter b_end,
-	      OutVecIter x_begin) const;
-
-  private:
-
-    std::size_t m_n_rows;
-
-    std::size_t m_n_cols;
-
-    _Matrix m_a;
-
-    std::vector<std::size_t> m_w;
-
-    std::vector<std::size_t> m_v;
-  };
-
-
-/**
  *  
  */
 template<typename _Matrix, typename _Vector>
@@ -403,5 +354,6 @@ template<typename _Matrix, typename _Vector>
 
 } // namespace matrix
 
+#include "matrix_sv_decomp.tcc"
 
 #endif // MATRIX_SV_DECOMP_TCC

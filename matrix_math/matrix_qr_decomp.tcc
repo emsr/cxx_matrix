@@ -12,51 +12,6 @@ namespace matrix
 {
 
 
-/**
- *  This class represents an QR decomposition.
- */
-template<typename _NumTp, typename _Matrix>
-  class qr_decomposition
-  {
-
-  public:
-
-    using value_type = std::decay_t<decltype(_Matrix{}[0][0])>;
-
-    template<typename _Matrix2>
-      qr_decomposition(std::size_t m_n_rows, std::size_t n_cols,
-		       _Matrix2& a);
-
-    template<typename _Vector2, typename _VectorOut>
-      void backsubstitution(_Vector2& b, _VectorOut& x);
-
-    template<typename _InVecIter, typename _OutVecIter>
-      void
-      backsubstitution(_InVecIter b_begin, _InVecIter b_end,
-		       _OutVecIter x_begin) const;
-
-    template<typename _Matrix2>
-      void inverse(_Matrix2& a_inv);
-
-    template<typename _Matrix2, typename _Vector2>
-      void update(_Matrix2& r, _Matrix2& qt,
-		  _Vector2& u, _Vector2& v);
-
-  private:
-
-    std::size_t m_n_rows;
-
-    std::size_t m_n_cols;
-
-    _Matrix m_a;
-
-    std::vector<std::size_t> m_c;
-
-    std::vector<std::size_t> m_d;
-
-    bool m_singular;
-  };
-
 
 /**
  * Constructs the QR decomposition of a[0..n_rows - 1][0..n_cols - 1].  The upper triangular matrix R

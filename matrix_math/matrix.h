@@ -123,10 +123,10 @@ template<typename Tp>
 
 }  //  namespace matrix
 
-#include "matrix_lu_decomp.tcc"
-#include "matrix_qr_decomp.tcc"
-#include "matrix_sv_decomp.tcc"
-#include "matrix_cholesky_decomp.tcc"
-#include "matrix_gauss_jordan.tcc"
-#include "matrix_tridiag.tcc"
-#include "matrix_vandermonde.tcc"
+#include "matrix_lu_decomp.h"
+#include "matrix_qr_decomp.h"
+#include "matrix_sv_decomp.h"
+#include "matrix_cholesky_decomp.h"
+#include "matrix_gauss_jordan.h"
+#include "matrix_tridiag.h"
+#include "matrix_vandermonde.h"

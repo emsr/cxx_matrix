@@ -1,5 +1,12 @@
+#ifndef MATRIX_VANDERMONDE_TCC
+#define MATRIX_VANDERMONDE_TCC 1
 
+namespace matrix
+{
 
+/**
+ *
+ */
 template<typename _Tp>
   void
   vandermonde(std::size_t n, const _Tp* x, const _Tp* q, _Tp* w)
@@ -33,3 +40,7 @@ template<typename _Tp>
 	  }
       }
   }
+
+} // namespace matrix
+
+#endif // MATRIX_VANDERMONDE_TCC
