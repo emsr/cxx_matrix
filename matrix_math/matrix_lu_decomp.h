@@ -1,6 +1,8 @@
 #ifndef MATRIX_LU_DECOMP_H
 #define MATRIX_LU_DECOMP_H 1
 
+#include <vector>
+
 namespace matrix
 {
 

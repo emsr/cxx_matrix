@@ -354,6 +354,4 @@ template<typename _Matrix, typename _Vector>
 
 } // namespace matrix
 
-#include "matrix_sv_decomp.tcc"
-
 #endif // MATRIX_SV_DECOMP_TCC

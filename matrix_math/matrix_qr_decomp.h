@@ -1,6 +1,7 @@
 #ifndef MATRIX_QR_DECOMP_H
 #define MATRIX_QR_DECOMP_H 1
 
+#include <vector>
 
 namespace matrix
 {

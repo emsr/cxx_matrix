@@ -1,5 +1,7 @@
-#ifndef MATRIX_SV_DECOMP_TCC
-#define MATRIX_SV_DECOMP_TCC
+#ifndef MATRIX_SV_DECOMP_H
+#define MATRIX_SV_DECOMP_H
+
+#include <vector>
 
 namespace matrix
 {
@@ -85,5 +87,6 @@ template<typename _Matrix, typename _Vector>
 
 } // namespace matrix
 
+#include "matrix_sv_decomp.tcc"
 
 #endif // MATRIX_SV_DECOMP_H
