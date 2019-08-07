@@ -1,3 +1,10 @@
+
+CMakeCache.txt
+CMakeFiles/
+CTestTestfile.cmake
+cmake_install.cmake
+Makefile
+
 # Compiled Object files
 *.slo
 *.lo

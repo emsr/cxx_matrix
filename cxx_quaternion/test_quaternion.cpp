@@ -1,4 +1,4 @@
-#include "quaternion.h"
+#include <ext/quaternion.h>
 
 int
 main()
