@@ -118,13 +118,13 @@ template<typename _Tp>
 	  }
 	//vandermonde(std::size_t n, const _Tp* x, const _Tp* q, _Tp* w);
 	using matrix_t = std::vector<std::vector<_Tp>>;
-	//matrix::lu_decomposition<_Tp, matrix_t> lu(n, vdm);
-	//lu.inverse(inv);
+	matrix::lu_decomposition<_Tp, matrix_t> lu(n, vdm);
 	matrix_t inv(n, std::vector<_Tp>(n));
-	std::vector<int> index(n);
-	_Tp parity;
-	matrix::lu_decomp(n, vdm, index, parity);
-	matrix::lu_invert(n, vdm, index, inv);
+	lu.inverse(inv);
+	//std::vector<int> index(n);
+	//_Tp parity;
+	//matrix::lu_decomp(n, vdm, index, parity);
+	//matrix::lu_invert(n, vdm, index, inv);
 	for (int i = 0; i < n; ++i)
 	  {
 	    for (int j = 0; j < n; ++j)
