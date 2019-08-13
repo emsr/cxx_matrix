@@ -64,8 +64,8 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
       using difference_type = std::ptrdiff_t;
       using pointer = element_type*;
       using reference = element_type&;
-      using iterator = pointer; /* implementation-defined */
-      using const_iterator = const pointer; /* implementation-defined */
+      using iterator = pointer;
+      using const_iterator = const pointer;
       using reverse_iterator = std::reverse_iterator<iterator>;
       using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
@@ -75,6 +75,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
       constexpr
       span() noexcept
+      : _M_data{}, _M_size{}
       { }
 
       constexpr
@@ -330,14 +331,6 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 		:(sizeof(_Tp) * _Extent))>
     as_writeable_bytes(span<_Tp, _Extent>) noexcept;
 
-  template<typename _Container>
-    span(_Container&)
-    -> span<typename _Container::value_type>;
-
-  template<typename _Container>
-    span(const _Container&)
-    -> span<std::add_const_t<typename _Container::value_type>>;
-
   template<typename _Tp, std::size_t _Num>
     span(_Tp(&)[_Num])
     -> span<_Tp, _Num>;
@@ -348,7 +341,15 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
   template<typename _Tp, std::size_t _Num>
     span(const array<_Tp, _Num>&)
-    -> span<std::add_const_t<_Tp>, _Num>;
+    -> span<const _Tp, _Num>;
+
+  template<typename _Container>
+    span(_Container&)
+    -> span<typename _Container::value_type>;
+
+  template<typename _Container>
+    span(const _Container&)
+    -> span<const typename _Container::value_type>;
 
 _GLIBCXX_END_NAMESPACE_VERSION
 } // namespace std

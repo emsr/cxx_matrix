@@ -2,7 +2,7 @@
 $HOME/bin/bin/g++ -std=gnu++17 -g -Wall -Wextra -Wno-psabi -I. -o test_array_ref test_array_ref.cpp
 */
 
-#include <array_ref>
+#include <attic/array_ref>
 
 void foo(int A[] , size_t N); // Traditional API
 void foo(const int A[], size_t N); // Traditional API

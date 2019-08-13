@@ -1,6 +1,6 @@
 
 /*
-$HOME/bin/bin/g++ -std=gnu++17 -Wno-psabi -I../tr29124_test -o test_vandermonde test_vandermonde.cpp -lquadmath
+$HOME/bin/bin/g++ -std=gnu++17 -Wno-psabi -I../../tr29124_test -I../../tr29124_test/quadrature/include -o test_vandermonde test_vandermonde.cpp -lquadmath
 ./test_vandermonde > test_vandermonde.txt
 */
 
@@ -9,7 +9,8 @@ $HOME/bin/bin/g++ -std=gnu++17 -Wno-psabi -I../tr29124_test -o test_vandermonde 
 #include <vector>
 #include <iostream>
 #include <iomanip>
-#include "matrix_math/matrix.h"
+#include "matrix.h"
+#include <bits/specfun_state.h>
 
   /**
    * *** stole this from tr29124/quadrature/build_*

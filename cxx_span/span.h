@@ -333,14 +333,6 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	return std::span<std::byte, S>{reinterpret_cast<const std::byte*>(__span.data()), __span.size_bytes()};
       }
 
-    template<typename _Container>
-      span(_Container&)
-      -> span<typename _Container::value_type>;
-
-    template<typename _Container>
-      span(const _Container&)
-      -> span<std::add_const_t<typename _Container::value_type>>;
-
     template<typename _Tp, std::size_t _Num>
       span(_Tp(&)[_Num])
       -> span<_Tp, _Num>;
@@ -351,7 +343,15 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
     template<typename _Tp, std::size_t _Num>
       span(const array<_Tp, _Num>&)
-      -> span<std::add_const_t<_Tp>, _Num>;
+      -> span<const _Tp, _Num>;
+
+    template<typename _Container>
+      span(_Container&)
+      -> span<typename _Container::value_type>;
+
+    template<typename _Container>
+      span(const _Container&)
+      -> span<const typename _Container::value_type>;
 
 _GLIBCXX_END_NAMESPACE_VERSION
 }
