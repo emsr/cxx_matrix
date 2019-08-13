@@ -275,48 +275,6 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
       index_type _M_size = 0;
   };
 
-  // [span.comparison], span comparison operators
-
-  template<typename _Tp, std::ptrdiff_t _Extent>
-    constexpr bool
-    operator==(const span<_Tp, _Extent>& __lhs,
-	       const span<_Tp, _Extent>& __rhs)
-    { return std::equal(__lhs.begin(), __lhs.end(),
-			__rhs.begin(), __rhs.end()); }
-
-  template<typename _Tp, std::ptrdiff_t _Extent>
-    constexpr bool
-    operator!=(const span<_Tp, _Extent>& __lhs,
-	       const span<_Tp, _Extent>& __rhs)
-    { return !(__lhs == __rhs); }
-
-  template<typename _Tp, std::ptrdiff_t _Extent>
-    constexpr bool
-    operator<(const span<_Tp, _Extent>& __lhs,
-	      const span<_Tp, _Extent>& __rhs)
-    {
-      return std::lexicographical_compare(__lhs.begin(), __lhs.end(),
-					  __rhs.begin(), __rhs.end());
-    }
-
-  template<typename _Tp, std::ptrdiff_t _Extent>
-    constexpr bool
-    operator<=(const span<_Tp, _Extent>& __lhs,
-	       const span<_Tp, _Extent>& __rhs)
-    { return !(__rhs < __lhs); }
-
-  template<typename _Tp, std::ptrdiff_t _Extent>
-    constexpr bool
-    operator>(const span<_Tp, _Extent>& __lhs,
-	      const span<_Tp, _Extent>& __rhs)
-    { return __rhs < __lhs; }
-
-  template<typename _Tp, std::ptrdiff_t _Extent>
-    constexpr bool
-    operator>=(const span<_Tp, _Extent>& __lhs,
-	       const span<_Tp, _Extent>& __rhs)
-    { return !(__lhs < __rhs); }
-
   // [span.objectrep], views of object representation
 
   template<typename _Tp, std::ptrdiff_t _Extent>
