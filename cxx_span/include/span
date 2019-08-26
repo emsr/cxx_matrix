@@ -123,20 +123,20 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	constexpr
 	span(element_type (&__arr)[_Num])
 	: _M_data(__arr), _M_size(_Num)
-	{ static_assert(_Extent <= _Num); }
+	{ static_assert(_Extent == dynamic_extent || _Extent <= _Num); }
 
       template<size_t _Num>
 	constexpr
 	span(std::array<std::remove_const_t<element_type>, _Num>& __arr)
 	: _M_data(__arr.data()), _M_size(_Num)
-	{ static_assert(_Extent <= _Num); }
+	{ static_assert(_Extent == dynamic_extent || _Extent <= _Num); }
 
       // is_const_v<element_type>
       template<size_t _Num>
 	constexpr
 	span(const std::array<std::remove_const_t<element_type>, _Num>& __arr)
 	: _M_data(__arr.data()), _M_size(__arr.size())
-	{ static_assert(_Extent <= _Num); }
+	{ static_assert(_Extent == dynamic_extent || _Extent <= _Num); }
 
       template<typename _Container>
 	constexpr
