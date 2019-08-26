@@ -34,25 +34,52 @@
 #if __cplusplus >= 201703L
 
 #include <cstdint>
+#include <cstddef>
 #include <type_traits>
+#include <limits>
 #include <array>
 #include <iterator>
-#include <cstddef>
 
 namespace std _GLIBCXX_VISIBILITY(default)
 {
 _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
+  namespace __detail
+  {
+    // primary template handles types that do not support pre-increment:
+    template<typename, typename = std::void_t<>>
+      struct __has_size_and_data_members
+      : std::false_type
+      { };
+
+    // specialization recognizes types that do support pre-increment:
+    template<typename _Tp>
+      struct __has_size_and_data_members<_Tp,
+			std::void_t<decltype(std::declval<_Tp>().data()),
+				    decltype(std::declval<_Tp>().size())>>
+      : std::true_type
+      { };
+
+    template<typename _Tp>
+      using __has_size_and_data_members_t
+	= typename __has_size_and_data_members<_Tp>::type;
+
+    template<typename _Tp>
+      constexpr bool __has_size_and_data_members_v
+	= __has_size_and_data_members<_Tp>::value;
+  }
+
   // [views.constants], constants
 
-  constexpr std::ptrdiff_t dynamic_extent = -1;
+  inline constexpr std::size_t
+  dynamic_extent = std::numeric_limits<std::size_t>::max();
 
   // [span], class template span
 
   /**
    * 
    */
-  template<typename _Tp, std::ptrdiff_t _Extent = dynamic_extent>
+  template<typename _Tp, std::size_t _Extent = dynamic_extent>
     class span
     {
     public:
@@ -61,10 +88,12 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
       using element_type = _Tp;
       using value_type = std::remove_cv_t<_Tp>;
-      using index_type = std::ptrdiff_t;
+      using index_type = std::size_t;
       using difference_type = std::ptrdiff_t;
       using pointer = element_type*;
+      using const_pointer = const element_type*;
       using reference = element_type&;
+      using const_reference = const element_type&;
       using iterator = pointer;
       using const_iterator = const pointer;
       using reverse_iterator = std::reverse_iterator<iterator>;
@@ -76,13 +105,10 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
       constexpr
       span() noexcept
-      : _M_data{}, _M_size{}
-      { }
+      : _M_data{nullptr}, _M_size{0}
+      { static_assert(_Extent == dynamic_extent || _Extent == 0); }
 
-      constexpr
-      span(nullptr_t) noexcept
-      { }
-
+      // FIXME: Ensure Extent == dynamic_extent || Extent == count
       constexpr
       span(pointer __ptr, index_type __count)
       : _M_data(__ptr), _M_size{__count}
@@ -97,53 +123,43 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	constexpr
 	span(element_type (&__arr)[_Num])
 	: _M_data(__arr), _M_size(_Num)
-	{ /*Warn if extent > _Num*/ }
+	{ static_assert(_Extent <= _Num); }
 
       template<size_t _Num>
 	constexpr
-	span(array<remove_const_t<element_type>, _Num>& __arr)
+	span(std::array<std::remove_const_t<element_type>, _Num>& __arr)
 	: _M_data(__arr.data()), _M_size(_Num)
-	{ /*Warn if extent > _Num*/ }
+	{ static_assert(_Extent <= _Num); }
 
       // is_const_v<element_type>
       template<size_t _Num>
 	constexpr
-	span(const array<remove_const_t<element_type>, _Num>& __arr)
+	span(const std::array<std::remove_const_t<element_type>, _Num>& __arr)
 	: _M_data(__arr.data()), _M_size(__arr.size())
-	{ /*Warn if extent > _Num*/ }
+	{ static_assert(_Extent <= _Num); }
 
       template<typename _Container>
 	constexpr
 	span(_Container& __cont)
 	: _M_data(__cont.data()), _M_size(__cont.size())
-	{ }
+	{ static_assert(__detail::__has_size_and_data_members_v<_Container>); }
 
       template<typename _Container>
 	span(const _Container& __cont)
 	: _M_data(__cont.data()), _M_size(__cont.size())
-	{ }
+	{ static_assert(__detail::__has_size_and_data_members_v<_Container>); }
 
       constexpr
       span(const span& __other) noexcept = default;
 
-      constexpr
-      span(span&& __other) noexcept = default;
-
-      template<typename _ElementType2, std::ptrdiff_t _Extent2>
+      template<typename _ElementType2, std::size_t _Extent2>
 	constexpr
 	span(const span<_ElementType2, _Extent2>& __other);
-
-      template<typename _ElementType2, std::ptrdiff_t _Extent2>
-	constexpr
-	span(span<_ElementType2, _Extent2>&& __other);
 
       ~span() noexcept = default;
 
       constexpr span&
       operator=(const span& __other) noexcept = default;
-
-      constexpr span&
-      operator=(span&& __other) noexcept = default;
 
       // [span.sub], span subviews
 
@@ -163,7 +179,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	  return __span_t(this->data() + (this->size() - _Count), _Count);
 	}
 
-      template <ptrdiff_t _Offset, std::ptrdiff_t _Count = dynamic_extent>
+      template <ptrdiff_t _Offset, std::size_t _Count = dynamic_extent>
 	constexpr span<element_type, _Count>
 	subspan() const
 	{
@@ -202,16 +218,8 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
       // [span.obs], span observers
 
       constexpr index_type
-      length() const noexcept
-      { return this->size(); }
-
-      constexpr index_type
       size() const noexcept
       { return this->_M_size; }
-
-      constexpr index_type
-      length_bytes() const noexcept
-      { return this->size_bytes(); }
 
       constexpr index_type
       size_bytes() const noexcept
@@ -267,11 +275,11 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
       const_reverse_iterator
       crbegin() const noexcept
-      { return reverse_iterator(this->cend()); }
+      { return const_reverse_iterator(this->cend()); }
 
       const_reverse_iterator
       crend() const noexcept
-      { return reverse_iterator(this->cbegin()); }
+      { return const_reverse_iterator(this->cbegin()); }
 
     private:
 
@@ -282,20 +290,25 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
   // [span.objectrep], views of object representation
 
-  template<typename _Tp, std::ptrdiff_t _Extent>
-    span<const std::byte, ((_Extent == dynamic_extent)
-		      ? dynamic_extent
-		      : (sizeof(_Tp) * _Extent))>
-    as_bytes(span<_Tp, _Extent> s) noexcept;
+  template<typename _Tp, std::size_t _Extent>
+    span<const std::byte, _Extent == dynamic_extent
+		   	? dynamic_extent
+		  	: sizeof(_Tp) * _Extent>
+    as_bytes(span<_Tp, _Extent> __s) noexcept
+    { return {reinterpret_cast<const std::byte*>(__s.data()), __s.size_bytes()}; }
 
-  template<typename _Tp, std::ptrdiff_t _Extent>
-    span<std::byte, ((_Extent == dynamic_extent)
-		? dynamic_extent
-		:(sizeof(_Tp) * _Extent))>
-    as_writeable_bytes(span<_Tp, _Extent>) noexcept;
+  // is_const_v<_Tp> is false
+  template<typename _Tp, std::size_t _Extent>
+    span<std::byte, _Extent == dynamic_extent
+			? dynamic_extent
+			:sizeof(_Tp) * _Extent>
+    as_writeable_bytes(span<_Tp, _Extent> __s) noexcept
+    { return {reinterpret_cast<std::byte*>(__s.data()), __s.size_bytes()}; }
+
+  // Deduction guides.
 
   template<typename _Tp, std::size_t _Num>
-    span(_Tp(&)[_Num])
+    span(_Tp (&)[_Num])
     -> span<_Tp, _Num>;
 
   template<typename _Tp, std::size_t _Num>
