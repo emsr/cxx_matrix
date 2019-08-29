@@ -78,7 +78,7 @@ template<typename _HermitianMatrix, typename _Vector>
   {
     using NumTp = std::decay_t<decltype(a[0][0])>;
 
-    for (std::ptrdiff_t i = 0; i < n; ++i)
+    for (std::ptrdiff_t i = 0; i < std::ptrdiff_t(n); ++i)
       for (std::ptrdiff_t j = 0; j <= i; ++j)
 	{
 	  auto sum = (j == i ? NumTp{1} : NumTp{0});
@@ -91,7 +91,7 @@ template<typename _HermitianMatrix, typename _Vector>
       for (std::ptrdiff_t j = 0; j <= i; ++j)
 	{
 	  auto sum = (i < j ? NumTp{0} : a_inv[j][i]);
-	  for (std::ptrdiff_t k = i + 1; k < n; ++k)
+	  for (std::ptrdiff_t k = i + 1; k < std::ptrdiff_t(n); ++k)
 	    sum -= a[k][i] * a_inv[j][k];
 	  a_inv[i][j] = a_inv[j][i] = sum / d[i];
 	}

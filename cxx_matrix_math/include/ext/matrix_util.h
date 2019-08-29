@@ -31,8 +31,8 @@ namespace matrix
     void
     copy_matrix(Numeric (&mat)[M][N], const Numeric (&mat_in)[M][N])
     {
-      for (int i = 0; i < M; ++i)
-	for (int j = 0; j < N; ++j)
+      for (std::size_t i = 0; i < M; ++i)
+	for (std::size_t j = 0; j < N; ++j)
 	  mat[i][j] = mat_in[i][j];
     }
 
@@ -40,11 +40,11 @@ namespace matrix
     void
     mul_matrix(Numeric (&c)[M][N], const Numeric (&a)[M][K], const Numeric (&b)[K][N])
     {
-      for (int i = 0; i < M; ++i)
-	for (int j = 0; j < N; ++j)
+      for (std::size_t i = 0; i < M; ++i)
+	for (std::size_t j = 0; j < N; ++j)
 	  {
 	    c[i][j] = Numeric{0};
-	    for (int k = 0; k < K; ++k)
+	    for (std::size_t k = 0; k < K; ++k)
 	      c[i][j] += a[i][k] * b[k][j];
 	  }
     }
@@ -56,7 +56,7 @@ namespace matrix
       for (int i = 0; i < M; ++i)
 	{
 	  c[i] = Numeric{0};
-	  for (int k = 0; k < K; ++k)
+	  for (std::size_t k = 0; k < K; ++k)
 	    c[i] += a[i][k] * b[k];
 	}
     }

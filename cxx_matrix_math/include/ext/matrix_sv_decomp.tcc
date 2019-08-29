@@ -22,8 +22,8 @@ template<typename _Matrix, typename _Vector>
   {
     using NumTp = std::remove_reference_t<decltype(a[0][0])>;
 
-    int flag, its, j, jj, k, l, nm;
-    NumTp c, f, h, s, x, y, z;
+    int l;
+    NumTp c, f, h, s;
 
     const int ITS = 30;
 
@@ -51,7 +51,7 @@ template<typename _Matrix, typename _Vector>
 		    s += a[k][i] * a[k][i];
 		  }
 		f = a[i][i];
-		g = -std::copysign(std::sqrt(s),f);
+		g = -std::copysign(std::sqrt(s), f);
 		h = f * g - s;
 		a[i][i] = f - g;
 		for (std::size_t j = l; j < n_cols; ++j)
@@ -63,7 +63,7 @@ template<typename _Matrix, typename _Vector>
 		    for (std::size_t k = i; k < n_rows; ++k)
 		      a[k][j] += f * a[k][i];
 		  }
-		for (int k = i; k < n_rows; ++k)
+		for (std::size_t k = i; k < n_rows; ++k)
 		  a[k][i] *= scale;
 	      }
 	  }
@@ -81,7 +81,7 @@ template<typename _Matrix, typename _Vector>
 		    s += a[i][k] * a[i][k];
 		  }
 		f = a[i][l];
-		g = -copysign(std::sqrt(s),f);
+		g = -std::copysign(std::sqrt(s), f);
 		h = f * g - s;
 		a[i][l] = f - g;
 		for (std::size_t k = l; k < n_cols; ++k)
@@ -104,7 +104,7 @@ template<typename _Matrix, typename _Vector>
     //  Accumulation of right-hand decomposition V.
     for (std::ptrdiff_t i = n_cols - 1; i >= 0; --i)
       {
-	if (i < n_cols - 1)
+	if (i < std::ptrdiff_t(n_cols - 1))
 	  {
 	    if (g)
 	      {
@@ -161,7 +161,7 @@ template<typename _Matrix, typename _Vector>
 	for (std::size_t its = 1; its <= ITS; ++its)
 	  {
 	    bool flag = true;
-	    std::ptrdiff_t l;
+	    std::ptrdiff_t l, nm;
 	    for (l = k; l >= 0; --l)
 	      {
 		nm = l - 1;
@@ -177,9 +177,9 @@ template<typename _Matrix, typename _Vector>
 	      {
 		auto c = NumTp{0};
 		auto s = NumTp{1};
-		for (std::size_t i = l; i < k; ++i)
+		for (std::ptrdiff_t i = l; i < k; ++i)
 		  {
-		    auto f = s * rv1[i];
+		    const auto f = s * rv1[i];
 		    rv1[i] = c * rv1[i];
 		    if (std::abs(f) + anorm == anorm)
 		      break;
@@ -198,7 +198,7 @@ template<typename _Matrix, typename _Vector>
 		      }
 		  }
 	      }
-	    z = w[k];
+	    auto z = w[k];
 	    if (l == k)
 	      {
 		//  Convergence!!!
@@ -219,18 +219,18 @@ template<typename _Matrix, typename _Vector>
 	      }
 
 	    //  Shift from bottom 2x2 minor.
-	    x = w[l];
+	    auto x = w[l];
 	    nm = k - 1;
-	    y = w[nm];
+	    auto y = w[nm];
 	    g = rv1[nm];
 	    h = rv1[k];
 	    f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2 * h * y);
 	    g = std::hypot(f, NumTp{1});
-	    f = ((x - z) * (x + z) + h * ((y / (f + copysign(g, f))) - h)) / x;
+	    f = ((x - z) * (x + z) + h * ((y / (f + std::copysign(g, f))) - h)) / x;
 
 	    //  Next QR transformation.
 	    c = s = NumTp{1};
-	    for (std::size_t j = l; j <= nm; ++j)
+	    for (std::ptrdiff_t j = l; j <= nm; ++j)
 	      {
 		auto i = j + 1;
 		g = rv1[i];

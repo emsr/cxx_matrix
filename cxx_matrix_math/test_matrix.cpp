@@ -7,8 +7,8 @@ LD_LIBRARY_PATH=$HOME/bin/lib64:$LD_LIBRARY_PATH ./test_matrix
 #include <iostream>
 #include <iomanip>
 
-#include "matrix.h"
-#include "matrix_util.h"
+#include <ext/matrix.h>
+#include <ext/matrix_util.h>
 
 //template<typename Tp, size_t M, size_t N>
 //  void

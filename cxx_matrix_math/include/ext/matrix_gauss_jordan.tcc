@@ -62,9 +62,9 @@ template<typename NumTp, typename _SquareMatrix, typename _Matrix>
 	// If index_row[i] != index_col[i] a column interchange is implied.
         if (irow != icol)
 	  {
-	    for (auto l = 0; l < n; ++l)
+	    for (auto l = 0u; l < n; ++l)
 	      std::swap(a[irow][l], a[icol][l]);
-	    for (auto l = 0; l < m; ++l)
+	    for (auto l = 0u; l < m; ++l)
 	      std::swap(b[irow][l], b[icol][l]);
 	  }
 	index_row[i] = irow;
@@ -73,26 +73,26 @@ template<typename NumTp, typename _SquareMatrix, typename _Matrix>
 	  std::__throw_runtime_error("gauss_jordan: Singular matrix");
 	const auto pivinv = NumTp{1} / a[icol][icol];
 	a[icol][icol] = NumTp{1};
-	for (auto l = 0; l < n; ++l)
+	for (auto l = 0u; l < n; ++l)
 	  a[icol][l] *= pivinv;
-	for (auto l = 0; l < m; ++l)
+	for (auto l = 0u; l < m; ++l)
 	  b[icol][l] *= pivinv;
-	for (auto ll = 0; ll < n; ++ll)
+	for (auto ll = 0u; ll < n; ++ll)
 	  {
 	    if (ll != icol)
 	      {
 		const auto dum = a[ll][icol];
 		a[ll][icol] = NumTp{};
-		for (auto l = 0; l < n; ++l)
+		for (auto l = 0u; l < n; ++l)
 		  a[ll][l] -= dum * a[icol][l];
-		for (auto l = 0; l < m; ++l)
+		for (auto l = 0u; l < m; ++l)
 		  b[ll][l] -= dum * b[icol][l];
 	      }
 	  }
       }
     for (int l = n - 1; l >= 0; --l)
       if (index_row[l] != index_col[l])
-        for (auto k = 0; k < n; ++k)
+        for (auto k = 0u; k < n; ++k)
 	  std::swap(a[k][index_row[l]], a[k][index_col[l]]);
   }
 
