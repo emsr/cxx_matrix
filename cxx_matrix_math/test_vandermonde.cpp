@@ -7,6 +7,10 @@
 
 #include <ext/matrix.h>
 #include <bits/quadrature_point.h>
+
+#include <ext/float128_limits.h>
+#include <ext/float128_io.h>
+
   /**
    * @brief  Return the Legendre polynomial by upward recursion
    * 	     on degree @f$ l @f$.
@@ -162,12 +166,12 @@
     std::vector<__gnu_cxx::__quadrature_point_t<_Tp>>
     __chebyshev_u_zeros(unsigned int __n)
     {
-      const auto _S_pi = _Tp{3.1415'92653'58979'32384'62643'38327'95028'84195e+0L};
+      const auto _S_pi = _Tp{3.141592653589793238462643383279502884195Q};
       std::vector<__gnu_cxx::__quadrature_point_t<_Tp>> __pt(__n);
       for (unsigned int __k = 1; __k <= __n; ++__k)
 	{
 	  auto __arg = _Tp(__k) / _Tp(__n + 1);
-	  auto __half = (__arg == _Tp{0.5L});
+	  auto __half = (__arg == _Tp{0.5Q});
 	  auto __z = (__half ? _Tp{0} : std::cos(_S_pi * __arg));
 	  auto __w = _S_pi * (_Tp{1} - __z * __z) / _Tp(__n + 1);
 	  __pt[__k - 1].__point = __z;
@@ -200,7 +204,7 @@ template<typename _Tp>
       }
     else
       {
-	const auto _S_pi = _Tp{3.1415'92653'58979'32384'62643'38327'95028'84195e+0L};
+	const auto _S_pi = _Tp{3.141592653589793238462643383279502884195Q};
 	auto uz = __chebyshev_u_zeros<_Tp>(__n - 1);
 	__out[0].__point = _Tp{+1};
 	__out[0].__weight = _Tp{1} / (__n * __n - 1 + __n % 2);
@@ -274,5 +278,7 @@ int
 main()
 {
   test_vandermonde<long double>();
+
+  test_vandermonde<__float128>();
 }
 

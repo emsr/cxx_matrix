@@ -23,5 +23,5 @@ target_link_libraries(test_matrix cxx_matrix_math)
 add_test(NAME run_test_matrix COMMAND bash -c "${CMAKE_BINARY_DIR}/bin/test_matrix > output/test_matrix.txt")
 
 add_executable(test_vandermonde test_vandermonde.cpp)
-target_link_libraries(test_vandermonde cxx_matrix_math)
+target_link_libraries(test_vandermonde cxx_matrix_math quadmath)
 add_test(NAME run_test_vandermonde COMMAND bash -c "${CMAKE_BINARY_DIR}/bin/test_vandermonde > output/test_vandermonde.txt")
