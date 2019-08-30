@@ -10,6 +10,7 @@
 
 #include <ext/float128_limits.h>
 #include <ext/float128_io.h>
+#include <ext/float128_math.h>
 
   /**
    * @brief  Return the Legendre polynomial by upward recursion
@@ -173,7 +174,7 @@
 	  auto __arg = _Tp(__k) / _Tp(__n + 1);
 	  auto __half = (__arg == _Tp{0.5Q});
 	  auto __z = (__half ? _Tp{0} : std::cos(_S_pi * __arg));
-	  auto __w = _S_pi * (_Tp{1} - __z * __z) / _Tp(__n + 1);
+	  auto __w = _S_pi * (_Tp{1} - __z) * (_Tp{1} + __z) / _Tp(__n + 1);
 	  __pt[__k - 1].__point = __z;
 	  __pt[__k - 1].__weight = __w;
 	}
@@ -239,7 +240,7 @@ template<typename _Tp>
     for (const auto& n : {4, 8, 16, 32, 64})
       {
 	std::cout << "\nClenshaw-Curtis " << n << "\n";
-	auto ccvec = build_clenshaw_curtis_sum<long double>(n);
+	auto ccvec = build_clenshaw_curtis_sum<_Tp>(n);
 	std::reverse(ccvec.begin(), ccvec.end());
 	for (const auto& cc : ccvec)
 	  {
