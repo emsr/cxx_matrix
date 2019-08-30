@@ -77,6 +77,9 @@ main()
 
   // Gauss-Jordan
 
+  std::cout << "\n Gauss-Jordan Elimination";
+  std::cout << "\n ------------------------\n";
+
   double A_GJ[3][3];
   matrix::copy_matrix(A_GJ, A_in);
   std::cout << "\n Input matrix for Gauss-Jordan elimination:\n";
@@ -105,6 +108,9 @@ main()
   matrix::print_matrix(B_test);
 
   // Lower-Upper Decomposition
+
+  std::cout << "\n Lower-Upper Decomposition";
+  std::cout << "\n -------------------------\n";
 
   double A_LU[3][3];
   matrix::copy_matrix(A_LU, A_in);
@@ -147,6 +153,9 @@ main()
   matrix::print_matrix(I_LU);
 
   // Singular Value Decomposition
+
+  std::cout << "\n Singular Value Decomposition";
+  std::cout << "\n ----------------------------\n";
 
   double A_SV[3][3];
   matrix::copy_matrix(A_SV, A_in);
@@ -192,6 +201,9 @@ main()
 
   // Cholesky Decomposition
 
+  std::cout << "\n Cholesky Decomposition";
+  std::cout << "\n ----------------------\n";
+
   double A_C[3][3];
   matrix::copy_matrix(A_C, A_in);
   // Make the matrix symmetric.
@@ -226,6 +238,9 @@ main()
   matrix::print_matrix(I_C);
 
   // QR Decomposition
+
+  std::cout << "\n QR Decomposition";
+  std::cout << "\n ----------------\n";
 
   double A_QR[3][3];
   matrix::copy_matrix(A_QR, A_in);
