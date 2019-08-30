@@ -1,9 +1,4 @@
 
-/*
-$HOME/bin/bin/g++ -std=c++17 -o test_matrix test_matrix.cpp
-LD_LIBRARY_PATH=$HOME/bin/lib64:$LD_LIBRARY_PATH ./test_matrix
-*/
-
 #include <iostream>
 #include <iomanip>
 
@@ -208,10 +203,11 @@ main()
   matrix::copy_matrix(A_C, A_in);
   // Make the matrix symmetric.
   for (int i = 0; i < 3; ++i)
+    A_C[i][i] = 5 * std::abs(A_C[i][i]);
+  for (int i = 0; i < 3; ++i)
     {
-      A_C[i][i] = 5 * std::abs(A_C[i][i]);
       for (int j = 0; j < i; ++j)
-	A_C[i][j] = A_C[j][i] = std::abs(A_C[i][j]);
+	A_C[i][j] = A_C[j][i] = std::abs(A_C[i][j]) / (A_C[i][i] + A_C[j][j]) / 2;
     }
   std::cout << "\n Input matrix for Cholesky decomposition:\n";
   matrix::print_matrix(A_C);
