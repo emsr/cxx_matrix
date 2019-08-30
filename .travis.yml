@@ -1,4 +1,8 @@
 sudo: require
+
+os: linux
+dist: bionic
+
 language: cpp
 compiler: gcc
 
@@ -7,11 +11,12 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get install -qq g++-8
+  - sudo apt-get install -qq doxygen
 
 script:
   - cmake .
   - make
+  - make -k test
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) -t 1af5a35c-cce4-4611-878a-7f0e78841353

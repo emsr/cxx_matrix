@@ -5,7 +5,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace std
+namespace __gnu_cxx
 {
 
 /**

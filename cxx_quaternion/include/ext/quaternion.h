@@ -3,7 +3,7 @@
 
 #include <iosfwd>
 
-namespace std
+namespace __gnu_cxx
 {
 
   template<typename _Tp>
