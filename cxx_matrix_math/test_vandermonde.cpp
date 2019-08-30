@@ -1,16 +1,152 @@
 
-/*
-$HOME/bin/bin/g++ -std=gnu++17 -Wno-psabi -I../../tr29124_test -I../../tr29124_test/quadrature/include -o test_vandermonde test_vandermonde.cpp -lquadmath
-./test_vandermonde > test_vandermonde.txt
-*/
-
 #include <ext/cmath>
 #include <limits>
 #include <vector>
 #include <iostream>
 #include <iomanip>
-#include "matrix.h"
-#include <bits/specfun_state.h>
+
+#include <ext/matrix.h>
+#include <bits/quadrature_point.h>
+  /**
+   * @brief  Return the Legendre polynomial by upward recursion
+   * 	     on degree @f$ l @f$.
+   *
+   * The Legendre function of degree @f$ l @f$ and argument @f$ x @f$,
+   * @f$ P_l(x) @f$, is defined by:
+   * @f[
+   *   P_l(x) = \frac{1}{2^l l!}\frac{d^l}{dx^l}(x^2 - 1)^{l}
+   * @f]
+   * This can be expressed as a series:
+   * @f[
+   *   P_l(x) = \frac{1}{2^l l!}\sum_{k=0}^{\lfloor l/2 \rfloor}
+   *            \frac{(-1)^k(2l-2k)!}{k!(l-k)!(l-2k)!}x^{l-2k}
+   * @f]
+   *
+   * @param  __l  The degree of the Legendre polynomial.  @f$ l >= 0 @f$.
+   * @param  __x  The argument of the Legendre polynomial.
+   */
+  template<typename _Tp>
+    _Tp
+    __legendre_p_norm(unsigned int __l, _Tp __x)
+    {
+      const auto norm = std::sqrt(_Tp(2 * __l + 1) / _Tp{2});
+
+      if (__x == _Tp{+1})
+	return norm * _Tp{+1};
+      else if (__x == _Tp{-1})
+	return norm * (__l % 2 == 1 ? _Tp{-1} : _Tp{+1});
+      else
+	{
+	  auto _P_lm2 = _Tp{1};
+	  if (__l == 0)
+	    return norm * _P_lm2;
+
+	  auto _P_lm1 = __x;
+	  if (__l == 1)
+	    return norm * _P_lm1;
+
+	  auto _P_l = _Tp{2} * __x * _P_lm1 - _P_lm2
+		    - (__x * _P_lm1 - _P_lm2) / _Tp{2};
+	  for (unsigned int __ll = 3; __ll <= __l; ++__ll)
+	    {
+	      _P_lm2 = _P_lm1;
+	      _P_lm1 = _P_l;
+	      // This arrangement is supposed to be better for roundoff
+	      // protection, Arfken, 2nd Ed, Eq 12.17a.
+	      _P_l = _Tp{2} * __x * _P_lm1 - _P_lm2
+		    - (__x * _P_lm1 - _P_lm2) / _Tp(__ll);
+	    }
+
+	  return norm * _P_l;
+	}
+    }
+
+  /**
+   * Return a Chebyshev polynomial of non-negative order @f$ n @f$
+   * and real argument @f$ x @f$ by the recursion
+   * @f[
+   *    C_n(x) = 2xC_{n-1} - C_{n-2}
+   * @f]
+   *
+   * @tparam _Tp The real type of the argument
+   * @param __n The non-negative integral order
+   * @param __x The real argument @f$ -1 <= x <= +1 @f$
+   * @param _C0 The value of the zeroth-order Chebyshev polynomial at @f$ x @f$
+   * @param _C1 The value of the first-order Chebyshev polynomial at @f$ x @f$
+   */
+  template<typename _Tp>
+    std::tuple<_Tp, _Tp, _Tp>
+    __chebyshev_recur(unsigned int __n, _Tp __x, _Tp _C0, _Tp _C1)
+    {
+      auto _Ck = _Tp{2} * __x * _C1 - _C0;
+      for (unsigned int __j = 2; __j < __n; ++__j)
+      {
+	_C0 = _C1;
+	_C1 = _Ck;
+	_Ck = _Tp{2} * __x * _C1 - _C0;
+      }
+      return std::make_tuple(_Ck, _C1, _C0);
+    }
+
+  /**
+   * Return the Chebyshev polynomial of the first kind @f$ T_n(x) @f$
+   * of non-negative order @f$ n @f$ and real argument @f$ x @f$.
+   *
+   * The Chebyshev polynomial of the first kind is defined by:
+   * @f[
+   *    T_n(x) = \cos(n \theta)
+   * @f]
+   * where @f$ \theta = \arccos(x) @f$, @f$ -1 <= x <= +1 @f$.
+   *
+   * @tparam _Tp The real type of the argument
+   * @param __n The non-negative integral order
+   * @param __x The real argument @f$ -1 <= x <= +1 @f$
+   */
+  template<typename _Tp>
+    _Tp
+    __chebyshev_t(unsigned int __n, _Tp __x)
+    {
+      auto _T0 = _Tp{1};
+      if (__n == 0)
+	return _T0;
+
+      auto _T1 = __x;
+      if (__n == 1)
+	return _T1;
+
+      auto _Ts = __chebyshev_recur(__n, __x, _T0, _T1);
+      return std::get<0>(_Ts);
+    }
+
+  /**
+   * Return the Chebyshev polynomial of the second kind @f$ U_n(x) @f$
+   * of non-negative order @f$ n @f$ and real argument @f$ x @f$.
+   *
+   * The Chebyshev polynomial of the second kind is defined by:
+   * @f[
+   *    U_n(x) = \frac{\sin \left[(n + 1)\theta \right]}{\sin(\theta)}
+   * @f]
+   * where @f$ \theta = \arccos(x) @f$, @f$ -1 <= x <= +1 @f$.
+   *
+   * @tparam _Tp The real type of the argument
+   * @param __n The non-negative integral order
+   * @param __x The real argument @f$ -1 <= x <= +1 @f$
+   */
+  template<typename _Tp>
+    _Tp
+    __chebyshev_u(unsigned int __n, _Tp __x)
+    {
+      auto _U0 = _Tp{1};
+      if (__n == 0)
+	return _U0;
+
+      auto _U1 = _Tp{2} * __x;
+      if (__n == 1)
+	return _U1;
+
+      auto _Us = __chebyshev_recur(__n, __x, _U0, _U1);
+      return std::get<0>(_Us);
+    }
 
   /**
    * *** stole this from tr29124/quadrature/build_*
@@ -19,20 +155,20 @@ $HOME/bin/bin/g++ -std=gnu++17 -Wno-psabi -I../../tr29124_test -I../../tr29124_t
    * of order @f$ n @f$, @f$ U_n(x) @f$.
    * The zeros are given by:
    * @f[
-   *   x_k = \cos\left(\frac{k\pi}{n+1}\right), k \elem {1, ..., n}
+   *   x_k = \cos\left(\frac{k\pi}{n + 1}\right), k \elem {1, ..., n}
    * @f]
    */
   template<typename _Tp>
     std::vector<__gnu_cxx::__quadrature_point_t<_Tp>>
     __chebyshev_u_zeros(unsigned int __n)
     {
-      const auto _S_pi = __gnu_cxx::__const_pi<_Tp>();
+      const auto _S_pi = _Tp{3.1415'92653'58979'32384'62643'38327'95028'84195e+0L};
       std::vector<__gnu_cxx::__quadrature_point_t<_Tp>> __pt(__n);
       for (unsigned int __k = 1; __k <= __n; ++__k)
 	{
 	  auto __arg = _Tp(__k) / _Tp(__n + 1);
-	  auto __half = __gnu_cxx::__fp_is_equal<_Tp>(__arg, _Tp{0.5L});
-	  auto __z = (__half ? _Tp{0} : __gnu_cxx::cos_pi(__arg));
+	  auto __half = (__arg == _Tp{0.5L});
+	  auto __z = (__half ? _Tp{0} : std::cos(_S_pi * __arg));
 	  auto __w = _S_pi * (_Tp{1} - __z * __z) / _Tp(__n + 1);
 	  __pt[__k - 1].__point = __z;
 	  __pt[__k - 1].__weight = __w;
@@ -64,7 +200,7 @@ template<typename _Tp>
       }
     else
       {
-	const auto _S_pi = __gnu_cxx::__const_pi<_Tp>();
+	const auto _S_pi = _Tp{3.1415'92653'58979'32384'62643'38327'95028'84195e+0L};
 	auto uz = __chebyshev_u_zeros<_Tp>(__n - 1);
 	__out[0].__point = _Tp{+1};
 	__out[0].__weight = _Tp{1} / (__n * __n - 1 + __n % 2);
@@ -92,7 +228,7 @@ template<typename _Tp>
   void
   test_vandermonde()
   {
-    std::cout.precision(__gnu_cxx::__digits10<_Tp>());
+    std::cout.precision(std::numeric_limits<_Tp>::digits10);
     auto w = 8 + std::cout.precision();
 
     std::cout << "\n\nCQUAD Rules\n";
@@ -100,6 +236,7 @@ template<typename _Tp>
       {
 	std::cout << "\nClenshaw-Curtis " << n << "\n";
 	auto ccvec = build_clenshaw_curtis_sum<long double>(n);
+	std::reverse(ccvec.begin(), ccvec.end());
 	for (const auto& cc : ccvec)
 	  {
 	    std::cout << std::setw(w) << cc.__point << ' '
@@ -107,32 +244,25 @@ template<typename _Tp>
 		      << '\n';
 	  }
 
-        std::vector<std::vector<_Tp>> vdm(n, std::vector<_Tp>(n));
-	for (int i = 0; i < n; ++i)
-	  {
-	    auto xk = _Tp{1};
-	    for (int j = 0; j < n; ++j)
-	      {
-		vdm[i][j] = xk;
-		xk *= ccvec[i].__point;
-	      }
-	  }
-	//vandermonde(std::size_t n, const _Tp* x, const _Tp* q, _Tp* w);
+	// The Vandermonde-like matrices use polynomial values not monomial powers.
+        std::vector<std::vector<_Tp>> vdm(n + 1, std::vector<_Tp>(n + 1));
+	for (int i = 0; i <= n; ++i)
+	  for (int j = 0; j <= n; ++j)
+	    vdm[i][j] = __legendre_p_norm(j, ccvec[i].__point);
 	using matrix_t = std::vector<std::vector<_Tp>>;
-	matrix::lu_decomposition<_Tp, matrix_t> lu(n, vdm);
-	matrix_t inv(n, std::vector<_Tp>(n));
-	lu.inverse(inv);
-	//std::vector<int> index(n);
-	//_Tp parity;
-	//matrix::lu_decomp(n, vdm, index, parity);
-	//matrix::lu_invert(n, vdm, index, inv);
-	for (int i = 0; i < n; ++i)
+	matrix_t inv(n + 1, std::vector<_Tp>(n + 1));
+	std::vector<int> index(n + 1);
+	_Tp parity;
+	matrix::lu_decomp(n + 1, vdm, index, parity);
+	matrix::lu_invert(n + 1, vdm, index, inv);
+	std::cout << '\n';
+	for (int i = 0; i <= n; ++i)
 	  {
-	    for (int j = 0; j < n; ++j)
+	    for (int j = 0; j <= n; ++j)
 	      {
 		if (std::abs(inv[i][j]) < 50 * std::numeric_limits<_Tp>::epsilon())
 		  inv[i][j] = _Tp{};
-		std::cout << ' ' << inv[i][j];
+		std::cout << ' ' << std::setw(w) << inv[i][j];
 	      }
 	    std::cout << '\n';
 	  }
